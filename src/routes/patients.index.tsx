@@ -1,12 +1,12 @@
-import { createSignal, For, Show } from 'solid-js';
 import { createQuery } from '@tanstack/solid-query';
+import { Link, createFileRoute } from '@tanstack/solid-router';
 import {
-  createSolidTable,
-  getCoreRowModel,
-  flexRender,
   createColumnHelper,
+  createSolidTable,
+  flexRender,
+  getCoreRowModel,
 } from '@tanstack/solid-table';
-import { createFileRoute, Link } from '@tanstack/solid-router';
+import { For, Show, createSignal } from 'solid-js';
 
 import { fetchPatients } from '@features/patients/services/patientService';
 
@@ -19,7 +19,7 @@ export const Route = createFileRoute('/patients/')({
 });
 
 function PatientListPage() {
-  const [searchQuery, setSearchQuery] = createSignal("");
+  const [searchQuery, setSearchQuery] = createSignal('');
 
   const query = createQuery(() => ({
     queryKey: ['patients', searchQuery()],
@@ -27,20 +27,26 @@ function PatientListPage() {
   }));
 
   const h = createColumnHelper<Patient>();
-  
+
   const columns = [
     h.accessor('last_name', {
       header: '氏名',
       cell: (info) => (
         <div class="flex flex-col text-left">
-          <span class="text-[10px] text-gray-400">{info.row.original.last_name_kana}</span>
-          <span class="font-bold text-gray-800">{info.getValue()} {info.row.original.first_name}</span>
+          <span class="text-[10px] text-gray-400">
+            {info.row.original.last_name_kana}
+          </span>
+          <span class="font-bold text-gray-800">
+            {info.getValue()} {info.row.original.first_name}
+          </span>
         </div>
       ),
     }),
     h.accessor('phone_number', {
       header: '連絡先',
-      cell: (info) => <span class="tabular-nums text-blue-600">{info.getValue() ?? '-'}</span>,
+      cell: (info) => (
+        <span class="tabular-nums text-blue-600">{info.getValue() ?? '-'}</span>
+      ),
     }),
     h.display({
       id: 'actions',
@@ -58,7 +64,9 @@ function PatientListPage() {
   ];
 
   const table = createSolidTable({
-    get data() { return query.data ?? [] },
+    get data() {
+      return query.data ?? [];
+    },
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
@@ -85,7 +93,10 @@ function PatientListPage() {
                   <For each={headerGroup.headers}>
                     {(header) => (
                       <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">
-                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                       </th>
                     )}
                   </For>
@@ -94,14 +105,26 @@ function PatientListPage() {
             </For>
           </thead>
           <tbody class="divide-y divide-gray-100">
-            <Show when={!query.isPending} fallback={<tr><td colspan="3" class="p-10 text-center text-gray-400 italic">読み込み中...</td></tr>}>
+            <Show
+              when={!query.isPending}
+              fallback={
+                <tr>
+                  <td colspan="3" class="p-10 text-center text-gray-400 italic">
+                    読み込み中...
+                  </td>
+                </tr>
+              }
+            >
               <For each={table.getRowModel().rows}>
                 {(row) => (
                   <tr class="hover:bg-blue-50/20 transition-colors">
                     <For each={row.getVisibleCells()}>
                       {(cell) => (
                         <td class="px-6 py-4 text-sm text-gray-600">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
                         </td>
                       )}
                     </For>

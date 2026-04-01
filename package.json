@@ -7,22 +7,24 @@
 		"dev": "vite",
 		"build": "vite build",
 		"serve": "vite preview",
-
 		"/* Linter & Formatter 保存時以外の一括チェック用 */": "echo 'Run lint and format'",
 		"lint": "biome check . && eslint .",
 		"format": "biome format --write .",
-
 		"/*Supabase DBのテーブル定義からTypeScript型ファイルを自動生成 */ ": "echo 'Sync database types'",
 		"gen-types": "bunx supabase gen types typescript --project-id 'nyqvxihzbbfgzxghuzju' > src/types/database.ts"
 	},
 	"dependencies": {
 		"@supabase/supabase-js": "^2.39.0",
 		"@tanstack/router-core": "^1.15.0",
+		"@tanstack/router-devtools": "^1.166.11",
+		"@tanstack/solid-query-devtools": "^5.96.0",
 		"@tanstack/solid-router": "^1.15.0",
+		"@tanstack/solid-router-devtools": "^1.166.11",
 		"solid-js": "^1.8.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.7.0",
+		"@tanstack/router-plugin": "^1.167.12",
 		"@tanstack/router-vite-plugin": "^1.15.0",
 		"@typescript-eslint/eslint-plugin": "^7.0.0",
 		"@typescript-eslint/parser": "^7.0.0",
