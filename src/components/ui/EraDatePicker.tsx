@@ -1,70 +1,107 @@
-import { createSignal, createMemo, For, Show } from 'solid-js';
-import { toJapaneseEra, EraSymbol } from '@utils/dateUtils';
+import { getJapaneseEraYear } from '@/utils/dateUtils';
+import { getDaysInMonth } from 'date-fns';
+import { type Component, For, createMemo } from 'solid-js';
 
-interface EraDatePickerProps {
-  value: string; // YYYY-MM-DD
-  onChange: (date: string) => void;
+interface Props {
+  value: string | null; // "YYYY-MM-DD" 形式
+  onSelect: (date: string) => void;
   label?: string;
-  error?: string;
-  required?: boolean;
+  startYear?: number; // 選択可能な開始年
+  endYear?: number; // 選択可能な終了年
 }
 
-const EraDatePicker = (props: EraDatePickerProps) => {
-  // 元号の選択肢
-  const eraOptions: { label: string; value: EraSymbol }[] = [
-    { label: '令和', value: 'R' },
-    { label: '平成', value: 'H' },
-    { label: '昭和', value: 'S' },
-    { label: '大正', value: 'T' },
-    { label: '明治', value: 'M' },
-  ];
-
-  // 現在の値から和暦情報を計算
-  const eraInfo = createMemo(() => {
-    if (!props.value) return null;
-    return toJapaneseEra(props.value);
-  });
-
-  // 入力値が変更された時のハンドラ（西暦ベースで更新）
-  const handleYearChange = (e: Event) => {
-    const inputYear = (e.target as HTMLInputElement).value;
-    const currentMonthDay = props.value.substring(4); // -MM-DD
-    props.onChange(`${inputYear}${currentMonthDay}`);
+export const EraDatePicker: Component<Props> = (props) => {
+  // 現在の値を年・月・日に分解して取得
+  const dateParts = () => {
+    const d = props.value ? new Date(props.value) : new Date();
+    return {
+      year: d.getFullYear(),
+      month: d.getMonth() + 1,
+      day: d.getDate(),
+    };
   };
 
-  const handleMonthDayChange = (e: Event) => {
-    const inputDate = (e.target as HTMLInputElement).value;
-    props.onChange(inputDate);
+  // 年の選択肢を生成 (デフォルトは1930年から今年まで)
+  const yearOptions = createMemo(() => {
+    const end = props.endYear || new Date().getFullYear();
+    const start = props.startYear || 1930;
+    return Array.from({ length: end - start + 1 }, (_, i) => end - i);
+  });
+
+  // 選択中の年月において、最大何日まであるかを動的に計算
+  const maxDays = createMemo(() => {
+    return getDaysInMonth(new Date(dateParts().year, dateParts().month - 1));
+  });
+
+  // ドロップダウン変更時の統合処理
+  const handleChange = (type: 'y' | 'm' | 'd', val: string) => {
+    const { year, month, day } = dateParts();
+    let newY = year,
+      newM = month,
+      newD = day;
+
+    if (type === 'y') newY = Number.parseInt(val);
+    if (type === 'm') newM = Number.parseInt(val);
+    if (type === 'd') newD = Number.parseInt(val);
+
+    // 月を切り替えた際に、日がその月の最大日数を超えていないかチェック
+    const currentMax = getDaysInMonth(new Date(newY, newM - 1));
+    if (newD > currentMax) newD = currentMax;
+
+    // YYYY-MM-DD形式で親コンポーネントに通知
+    const formatted = `${newY}-${String(newM).padStart(2, '0')}-${String(
+      newD,
+    ).padStart(2, '0')}`;
+    props.onSelect(formatted);
   };
 
   return (
-    <div class="flex flex-col gap-1.5">
-      <Show when={props.label}>
+    <div class="flex flex-col gap-1">
+      {props.label && (
         <label class="text-sm font-medium text-gray-700">{props.label}</label>
-      </Show>
-      
+      )}
+
       <div class="flex items-center gap-2">
-        {/* 西暦入力（隠し、または主入力） */}
-        <input
-          type="date"
-          value={props.value}
-          onInput={handleMonthDayChange}
-          class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border p-2"
-        />
+        {/* 年選択：西暦(和暦)形式 */}
+        <select
+          value={dateParts().year}
+          onChange={(e) => handleChange('y', e.currentTarget.value)}
+          class="border rounded px-2 py-1 bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+        >
+          <For each={yearOptions()}>
+            {(y) => (
+              <option value={y}>
+                {y} ({getJapaneseEraYear(y)})
+              </option>
+            )}
+          </For>
+        </select>
+        <span class="text-sm text-gray-600">年</span>
 
-        {/* 和暦表示バッジ（確認用） */}
-        <Show when={eraInfo()}>
-          <div class="shrink-0 px-3 py-2 bg-gray-100 border border-gray-200 rounded-md text-sm text-gray-600 font-medium">
-            {eraInfo()?.label}
-          </div>
-        </Show>
+        {/* 月選択 */}
+        <select
+          value={dateParts().month}
+          onChange={(e) => handleChange('m', e.currentTarget.value)}
+          class="border rounded px-2 py-1 bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+        >
+          <For each={Array.from({ length: 12 }, (_, i) => i + 1)}>
+            {(m) => <option value={m}>{m}</option>}
+          </For>
+        </select>
+        <span class="text-sm text-gray-600">月</span>
+
+        {/* 日選択：月によって日数を自動変更 */}
+        <select
+          value={dateParts().day}
+          onChange={(e) => handleChange('d', e.currentTarget.value)}
+          class="border rounded px-2 py-1 bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+        >
+          <For each={Array.from({ length: maxDays() }, (_, i) => i + 1)}>
+            {(d) => <option value={d}>{d}</option>}
+          </For>
+        </select>
+        <span class="text-sm text-gray-600">日</span>
       </div>
-
-      <Show when={props.error}>
-        <span class="text-xs text-red-500">{props.error}</span>
-      </Show>
     </div>
   );
 };
-
-export default EraDatePicker;

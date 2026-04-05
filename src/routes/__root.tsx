@@ -24,7 +24,7 @@ function RootComponent() {
         <div class="max-w-7xl mx-auto flex items-center justify-between">
           <div class="flex items-center space-x-8">
             <Link
-              to="/"
+              to="."
               activeOptions={{ exact: true }}
               class="text-xl font-bold text-blue-600"
             >
@@ -32,7 +32,7 @@ function RootComponent() {
             </Link>
             <div class="flex space-x-4">
               <Link
-                to="/"
+                to="."
                 activeOptions={{ exact: true }}
                 activeProps={{ class: 'text-blue-600 font-bold' }}
                 class="text-gray-600 hover:text-blue-500 transition-colors"
@@ -40,7 +40,7 @@ function RootComponent() {
                 ダッシュボード
               </Link>
               <Link
-                to="/patient-form"
+                to="/patients"
                 activeProps={{ class: 'text-blue-600 font-bold' }}
                 class="text-gray-600 hover:text-blue-500 transition-colors"
               >

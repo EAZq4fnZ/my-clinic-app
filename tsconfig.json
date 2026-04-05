@@ -1,29 +1,28 @@
 {
-	"compilerOptions": {
-		/* 基本設定（必須） */
-		"target": "ESNext",
-		"module": "ESNext",
-		"moduleResolution": "bundler",
-		"lib": ["DOM", "DOM.Iterable", "ESNext"],
-		"jsx": "preserve",
-		"jsxImportSource": "solid-js",
-		"types": ["vite/client"],
-		"noEmit": true,
-		"isolatedModules": true,
-		"esModuleInterop": true,
-		"allowSyntheticDefaultImports": true,
-		"skipLibCheck": true,
-		"strict": true,
+  "compilerOptions": {
+    /* 基本設定（必須） */
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
+    "types": ["vite/client"],
+    "noEmit": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "strict": true,
 
-		/* パス設定（Biome/ESLint/Viteとの連携用） */
-		"baseUrl": ".",
-		"paths": {
-			"@/*": ["src/*"],
-			"@features/*": ["src/features/*"],
-			"@ui/*": ["src/components/ui/*"],
-			"@lib/*": ["src/lib/*"],
-			"@utils/*": ["src/utils/*"]
-		}
-	},
-	"include": ["src", "eslint.config.js"]
+    /* パス設定（Biome/ESLint/Viteとの連携用） */
+    "paths": {
+      "@/*": ["./src/*"],
+      "@features/*": ["./src/features/*"],
+      "@ui/*": ["./src/components/ui/*"],
+      "@lib/*": ["./src/lib/*"],
+      "@utils/*": ["./src/utils/*"]
+    }
+  },
+  "include": ["src", "eslint.config.js"]
 }

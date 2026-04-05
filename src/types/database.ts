@@ -17,30 +17,36 @@ export type Database = {
       accidents: {
         Row: {
           created_at: string | null
+          display_id: string
           fault_ratio: string | null
           id: string
           location_address: string | null
           occurrence_datetime: string
+          occurrence_situation: string | null
           police_station: string | null
-          situation_type: string | null
+          updated_at: string
         }
         Insert: {
           created_at?: string | null
+          display_id: string
           fault_ratio?: string | null
           id?: string
           location_address?: string | null
           occurrence_datetime: string
+          occurrence_situation?: string | null
           police_station?: string | null
-          situation_type?: string | null
+          updated_at?: string
         }
         Update: {
           created_at?: string | null
+          display_id?: string
           fault_ratio?: string | null
           id?: string
           location_address?: string | null
           occurrence_datetime?: string
+          occurrence_situation?: string | null
           police_station?: string | null
-          situation_type?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -48,26 +54,32 @@ export type Database = {
         Row: {
           contact_date: string | null
           content: string
+          created_at: string | null
           id: string
           occurrence_date: string
           record_id: string | null
           staff_id: string | null
+          updated_at: string
         }
         Insert: {
           contact_date?: string | null
           content: string
+          created_at?: string | null
           id?: string
           occurrence_date?: string
           record_id?: string | null
           staff_id?: string | null
+          updated_at?: string
         }
         Update: {
           contact_date?: string | null
           content?: string
+          created_at?: string | null
           id?: string
           occurrence_date?: string
           record_id?: string | null
           staff_id?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -81,51 +93,57 @@ export type Database = {
       }
       patients: {
         Row: {
-          address: string | null
+          address_1: string | null
+          address_2: string | null
           birth_date: string | null
-          created_at: string | null
+          created_at: string
           display_id: string | null
           email: string | null
           first_name: string
           first_name_kana: string
-          gender: string | null
+          gender_type: Database["public"]["Enums"]["gender_type"]
           id: string
           last_name: string
           last_name_kana: string
           occupation: string | null
           phone_number: string | null
+          updated_at: string
           zip_code: string | null
         }
         Insert: {
-          address?: string | null
+          address_1?: string | null
+          address_2?: string | null
           birth_date?: string | null
-          created_at?: string | null
+          created_at?: string
           display_id?: string | null
           email?: string | null
           first_name: string
           first_name_kana: string
-          gender?: string | null
+          gender_type?: Database["public"]["Enums"]["gender_type"]
           id?: string
           last_name: string
           last_name_kana: string
           occupation?: string | null
           phone_number?: string | null
+          updated_at?: string
           zip_code?: string | null
         }
         Update: {
-          address?: string | null
+          address_1?: string | null
+          address_2?: string | null
           birth_date?: string | null
-          created_at?: string | null
+          created_at?: string
           display_id?: string | null
           email?: string | null
           first_name?: string
           first_name_kana?: string
-          gender?: string | null
+          gender_type?: Database["public"]["Enums"]["gender_type"]
           id?: string
           last_name?: string
           last_name_kana?: string
           occupation?: string | null
           phone_number?: string | null
+          updated_at?: string
           zip_code?: string | null
         }
         Relationships: []
@@ -153,6 +171,7 @@ export type Database = {
           patient_id: string | null
           statement_creation_date: string | null
           treatment_start_date: string | null
+          updated_at: string
         }
         Insert: {
           accident_cert_applicant?: string | null
@@ -176,6 +195,7 @@ export type Database = {
           patient_id?: string | null
           statement_creation_date?: string | null
           treatment_start_date?: string | null
+          updated_at?: string
         }
         Update: {
           accident_cert_applicant?: string | null
@@ -199,6 +219,7 @@ export type Database = {
           patient_id?: string | null
           statement_creation_date?: string | null
           treatment_start_date?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -225,7 +246,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      gender_type: "male" | "female" | "other" | "unknown"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -352,6 +373,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      gender_type: ["male", "female", "other", "unknown"],
+    },
   },
 } as const

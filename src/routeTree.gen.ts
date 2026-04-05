@@ -9,36 +9,13 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as PatientFormRouteImport } from './routes/patient-form'
-import { Route as NewCaseRouteImport } from './routes/new-case'
 import { Route as CaseIdRouteImport } from './routes/case-[id]'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as PatientsIndexRouteImport } from './routes/patients.index'
-import { Route as PatientsPatientIdRouteImport } from './routes/patients.$patientId'
+import { Route as PatientsPatientIdRouteImport } from './routes/patients/$patientId'
+import { Route as AccidentsAccidentIdRouteImport } from './routes/accidents/$accidentId'
 
-const PatientFormRoute = PatientFormRouteImport.update({
-  id: '/patient-form',
-  path: '/patient-form',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NewCaseRoute = NewCaseRouteImport.update({
-  id: '/new-case',
-  path: '/new-case',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const CaseIdRoute = CaseIdRouteImport.update({
   id: '/case-id',
   path: '/case-id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PatientsIndexRoute = PatientsIndexRouteImport.update({
-  id: '/patients/',
-  path: '/patients/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PatientsPatientIdRoute = PatientsPatientIdRouteImport.update({
@@ -46,103 +23,53 @@ const PatientsPatientIdRoute = PatientsPatientIdRouteImport.update({
   path: '/patients/$patientId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccidentsAccidentIdRoute = AccidentsAccidentIdRouteImport.update({
+  id: '/accidents/$accidentId',
+  path: '/accidents/$accidentId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
   '/case-id': typeof CaseIdRoute
-  '/new-case': typeof NewCaseRoute
-  '/patient-form': typeof PatientFormRoute
+  '/accidents/$accidentId': typeof AccidentsAccidentIdRoute
   '/patients/$patientId': typeof PatientsPatientIdRoute
-  '/patients/': typeof PatientsIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
   '/case-id': typeof CaseIdRoute
-  '/new-case': typeof NewCaseRoute
-  '/patient-form': typeof PatientFormRoute
+  '/accidents/$accidentId': typeof AccidentsAccidentIdRoute
   '/patients/$patientId': typeof PatientsPatientIdRoute
-  '/patients': typeof PatientsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
   '/case-id': typeof CaseIdRoute
-  '/new-case': typeof NewCaseRoute
-  '/patient-form': typeof PatientFormRoute
+  '/accidents/$accidentId': typeof AccidentsAccidentIdRoute
   '/patients/$patientId': typeof PatientsPatientIdRoute
-  '/patients/': typeof PatientsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/case-id'
-    | '/new-case'
-    | '/patient-form'
-    | '/patients/$patientId'
-    | '/patients/'
+  fullPaths: '/case-id' | '/accidents/$accidentId' | '/patients/$patientId'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/case-id'
-    | '/new-case'
-    | '/patient-form'
-    | '/patients/$patientId'
-    | '/patients'
+  to: '/case-id' | '/accidents/$accidentId' | '/patients/$patientId'
   id:
     | '__root__'
-    | '/'
     | '/case-id'
-    | '/new-case'
-    | '/patient-form'
+    | '/accidents/$accidentId'
     | '/patients/$patientId'
-    | '/patients/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
   CaseIdRoute: typeof CaseIdRoute
-  NewCaseRoute: typeof NewCaseRoute
-  PatientFormRoute: typeof PatientFormRoute
+  AccidentsAccidentIdRoute: typeof AccidentsAccidentIdRoute
   PatientsPatientIdRoute: typeof PatientsPatientIdRoute
-  PatientsIndexRoute: typeof PatientsIndexRoute
 }
 
 declare module '@tanstack/solid-router' {
   interface FileRoutesByPath {
-    '/patient-form': {
-      id: '/patient-form'
-      path: '/patient-form'
-      fullPath: '/patient-form'
-      preLoaderRoute: typeof PatientFormRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/new-case': {
-      id: '/new-case'
-      path: '/new-case'
-      fullPath: '/new-case'
-      preLoaderRoute: typeof NewCaseRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/case-id': {
       id: '/case-id'
       path: '/case-id'
       fullPath: '/case-id'
       preLoaderRoute: typeof CaseIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/patients/': {
-      id: '/patients/'
-      path: '/patients'
-      fullPath: '/patients/'
-      preLoaderRoute: typeof PatientsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/patients/$patientId': {
@@ -152,16 +79,20 @@ declare module '@tanstack/solid-router' {
       preLoaderRoute: typeof PatientsPatientIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/accidents/$accidentId': {
+      id: '/accidents/$accidentId'
+      path: '/accidents/$accidentId'
+      fullPath: '/accidents/$accidentId'
+      preLoaderRoute: typeof AccidentsAccidentIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
   CaseIdRoute: CaseIdRoute,
-  NewCaseRoute: NewCaseRoute,
-  PatientFormRoute: PatientFormRoute,
+  AccidentsAccidentIdRoute: AccidentsAccidentIdRoute,
   PatientsPatientIdRoute: PatientsPatientIdRoute,
-  PatientsIndexRoute: PatientsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

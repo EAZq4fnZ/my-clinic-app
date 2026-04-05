@@ -1,6 +1,6 @@
-import { render } from 'solid-js/web';
-import { RouterProvider, createRouter } from '@tanstack/solid-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query';
+import { RouterProvider, createRouter } from '@tanstack/solid-router';
+import { render } from 'solid-js/web';
 import { routeTree } from './routeTree.gen';
 
 const queryClient = new QueryClient();
@@ -20,6 +20,6 @@ if (rootElement) {
         <RouterProvider router={router} />
       </QueryClientProvider>
     ),
-    rootElement
+    rootElement,
   );
 }

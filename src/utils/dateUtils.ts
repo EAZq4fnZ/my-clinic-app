@@ -1,72 +1,53 @@
-// src/utils/dateUtils.ts
-
-// 1. 型定義
-export type AlertStatus = 'normal' | 'warning' | 'critical';
-
-export type EraSymbol = 'R' | 'H' | 'S' | 'T' | 'M';
-
-interface Era {
-  symbol: EraSymbol;
-  name: string;
-  start: Date;
-}
-
-// 2. 元号定義マスタ
-const ERAS: Era[] = [
-  { symbol: 'R', name: '令和', start: new Date('2019-05-01') },
-  { symbol: 'H', name: '平成', start: new Date('1989-01-08') },
-  { symbol: 'S', name: '昭和', start: new Date('1926-12-25') },
-  { symbol: 'T', name: '大正', start: new Date('1912-07-30') },
-  { symbol: 'M', name: '明治', start: new Date('1868-01-25') },
-];
+import { add, isAfter } from 'date-fns';
 
 /**
- * アラート状態の判定 (例: 最終受診日から1ヶ月以上空いたら warning)
+ * 西暦を和暦（略称：令和06/01/01形式）に変換する
  */
-export const getAlertStatus = (lastDate: string | null): AlertStatus => {
-  if (!lastDate) return 'normal';
+export const formatToJapaneseEra = (date: Date | string | null): string => {
+  if (!date) return '-';
+  const d = typeof date === 'string' ? new Date(date) : date;
 
-  const last = new Date(lastDate);
-  const now = new Date();
-  
-  // 30日以上経過していたら warning にする例
-  const diffDays = (now.getTime() - last.getTime()) / (1000 * 60 * 60 * 24);
-  
-  if (diffDays > 60) return 'critical';
-  if (diffDays > 30) return 'warning';
-  
-  return 'normal'; // ★ 最後に必ず return を置くことでエラーが解消されます
+  return new Intl.DateTimeFormat('ja-JP-u-ca-japanese', {
+    era: 'short',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(d);
 };
 
 /**
- * 西暦(YYYY-MM-DD)を和暦オブジェクトに変換
+ * 西暦から和暦の「年」の部分だけを抽出する (例: 2024 -> 令和6)
  */
-export const toJapaneseEra = (dateString: string) => {
-  const date = new Date(dateString);
-  if (isNaN(date.getTime())) return null;
-
-  const era = ERAS.find(e => date >= e.start);
-  if (!era) return { eraName: '西暦', year: date.getFullYear() };
-
-  const eraYear = date.getFullYear() - era.start.getFullYear() + 1;
-  return {
-    eraSymbol: era.symbol,
-    eraName: era.name,
-    year: eraYear,
-    label: `${era.name}${eraYear === 1 ? '元' : eraYear}年`
-  };
+export const getJapaneseEraYear = (year: number): string => {
+  const d = new Date(year, 0, 1);
+  return new Intl.DateTimeFormat('ja-JP-u-ca-japanese', {
+    era: 'short',
+    year: 'numeric',
+  }).format(d);
 };
 
 /**
- * 生年月日から現在の年齢を計算
+ * 警告ステータスの取得
+ * - 1ヶ月以上経過: critical
+ * - 3週間(21日)以上経過: warn
+ * - それ以外: normal
  */
-export const calculateAge = (birthDate: string): number => {
+export type AlertStatus = 'normal' | 'warn' | 'critical';
+
+export const getAlertStatus = (
+  targetDate: Date | string | null,
+): AlertStatus => {
+  if (!targetDate) return 'normal';
+  const start: Date =
+    typeof targetDate === 'string' ? new Date(targetDate) : targetDate;
   const today = new Date();
-  const birth = new Date(birthDate);
-  let age = today.getFullYear() - birth.getFullYear();
-  const m = today.getMonth() - birth.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
-    age--;
-  }
-  return age;
+
+  // 今日 日付がstartより１か月超えていれば、警告ステータス[critical]を返す
+  if (isAfter(today, add(start, { months: 1 }))) return 'critical';
+
+  // 今日 日付がstartより３週間超えていれば、警告ステータス[warn]を返す
+  if (isAfter(today, add(start, { weeks: 3 }))) return 'warn';
+
+  // それ以外（３週間以内）のため [normal]を返す
+  return 'normal';
 };
