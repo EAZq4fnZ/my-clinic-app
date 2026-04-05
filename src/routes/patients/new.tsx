@@ -1,18 +1,25 @@
-// @routes/patients/new.tsx
+// src/routes/patients/new.tsx
+import { createFileRoute, useNavigate } from '@tanstack/solid-router';
+import { type Component, createSignal } from 'solid-js';
+
 import { supabase } from '@/lib/supabase';
 import { PatientForm } from '@features/patients/components/PatientForm';
 import type { PatientFormValues } from '@features/patients/schemas/patient';
-import { useNavigate } from '@tanstack/solid-router';
-import { type Component, createSignal } from 'solid-js';
 
-const PatientNewPage: Component = () => {
+// 患者新規登録ページ
+export const Route = createFileRoute('/patients/new')({
+  component: PatientNewPage,
+});
+
+// 患者新規登録ページのコンポーネント
+function PatientNewPage() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = createSignal(false);
 
   const handleSubmit = async (values: PatientFormValues) => {
     setIsLoading(true);
     try {
-      // Supabaseへの保存処理
+      // address_1, address_2 への分割対応版
       const { error } = await supabase
         .from('patients')
         .insert({
@@ -20,11 +27,11 @@ const PatientNewPage: Component = () => {
           first_name: values.first_name,
           last_name_kana: values.last_name_kana,
           first_name_kana: values.first_name_kana,
-          gender: values.gender, // Enum型(male/female/other/unknown)
+          gender_type: values.gender_type,
           birth_date: values.birth_date,
           zip_code: values.zip_code,
-          address_1: values.address_1, // 修正点：addressから分割
-          address_2: values.address_2, // 修正点：addressから分割
+          address_1: values.address_1,
+          address_2: values.address_2,
           phone_number: values.phone_number,
         })
         .select()
@@ -34,7 +41,7 @@ const PatientNewPage: Component = () => {
 
       alert('患者情報を登録しました。');
 
-      // 登録成功後、一覧画面に戻る（または詳細画面へ）
+      // 型安全な遷移
       navigate({ to: '/patients' });
     } catch (e: any) {
       console.error('保存エラー:', e);
@@ -60,6 +67,6 @@ const PatientNewPage: Component = () => {
       />
     </div>
   );
-};
+}
 
 export default PatientNewPage;

@@ -51,7 +51,9 @@ export const patientSchema = z.object({
   address_2: z.string().min(1, '住所（番地）を入力してください').optional(),
 
   // 6. その他のフィールドも必要に応じて追加可能
-  gender: z.enum(['male', 'female', 'other', 'unknown']).default('unknown'),
+  gender_type: z
+    .enum(['male', 'female', 'other', 'unknown'])
+    .default('unknown'),
   email: z.string().email('有効なメールアドレスを入力してください').optional(),
 });
 
@@ -67,7 +69,7 @@ export const defaultPatientValues: PatientFormValues = {
   first_name: '',
   last_name_kana: '',
   first_name_kana: '',
-  gender: 'unknown',
+  gender_type: 'unknown',
   birth_date: '1980-01-01',
   zip_code: '',
   address_1: '',

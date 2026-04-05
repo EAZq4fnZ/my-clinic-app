@@ -96,7 +96,7 @@ export const PatientForm: Component<PatientFormProps> = (props) => {
 
       {/* 性別と生年月日 */}
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <form.Field name="gender">
+        <form.Field name="gender_type">
           {(field) => (
             <div class="space-y-1">
               <label class="text-sm font-bold text-gray-600">性別</label>

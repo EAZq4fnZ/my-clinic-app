@@ -1,147 +1,119 @@
+// src/routes/patients/$patientId.tsx
 import { supabase } from '@/lib/supabase';
-import { formatToJapaneseEra } from '@/utils/dateUtils';
-import { Link, createFileRoute, useParams } from '@tanstack/solid-router';
-import { For, Show, createResource } from 'solid-js';
+import { createFileRoute, useNavigate } from '@tanstack/solid-router';
+import { type Component, Show, createResource } from 'solid-js';
 
+// 患者の詳細ページコンポーネント (ルート定義とデータ取得ロジックを含む)
+// ルート定義
 export const Route = createFileRoute('/patients/$patientId')({
-  component: PatientDetail,
+  component: PatientDetailPage,
 });
 
-export default function PatientDetail() {
-  const params = useParams({ from: '/patients/$patientId' });
+// Supabaseから患者データを取得する関数
+const fetchPatient = async (id: string) => {
+  const { data, error } = await supabase
+    .from('patients')
+    .select('*')
+    .eq('id', id)
+    .single();
 
-  // 患者基本情報と、紐付く事故案件をまとめて取得
-  const [patientData] = createResource(async () => {
-    const { data, error } = await supabase
-      .from('patients')
-      .select(`
-        *,
-        accidents (
-          *,
-          treatment_records (
-            status,
-            updated_at
-          )
-        )
-      `)
-      .eq('id', params.patientId)
-      .single();
+  if (error) throw error;
+  return data;
+};
 
-    if (error) throw error;
-    return data;
-  });
+// 患者の詳細情報を表示するコンポーネント
+function PatientDetailPage() {
+  const params = Route.useParams(); // URLからIDを取得
+  const navigate = useNavigate();
+  const [patient] = createResource(() => params().patientId, fetchPatient);
 
   return (
-    <div class="p-6 max-w-5xl mx-auto space-y-8">
-      {/* ヘッダー・基本情報セクション */}
-      <Show when={patientData()} fallback={<p>読み込み中...</p>}>
-        {(p) => (
-          <>
-            <header class="flex justify-between items-start">
-              <div>
-                <div class="text-sm text-gray-500 mb-1">
-                  患者番号: {p().id.slice(0, 8)}
-                </div>
-                <h1 class="text-3xl font-bold text-gray-900">
-                  {p().last_name} {p().first_name}
-                  <span class="text-lg font-normal text-gray-500 ml-4">
-                    ({p().last_name_kana} {p().first_name_kana})
-                  </span>
-                </h1>
-                <p class="mt-2 text-gray-600">
-                  {formatToJapaneseEra(p().birth_date)} 生
-                </p>
-              </div>
-              <A
-                href={`/patients/edit/${p().id}`}
-                class="text-blue-600 hover:underline font-medium"
-              >
-                基本情報を編集
-              </A>
-            </header>
+    <div class="max-w-4xl mx-auto py-8 px-4">
+      <header class="flex justify-between items-center mb-8">
+        <div>
+          <button
+            onClick={() => navigate({ to: '/patients' })}
+            class="text-sm text-blue-600 hover:underline mb-2 block"
+          >
+            ← 患者一覧に戻る
+          </button>
+          <h1 class="text-2xl font-bold text-gray-800">患者詳細情報</h1>
+        </div>
+        <div class="flex gap-3">
+          {/* 編集機能などは今後追加可能 */}
+          <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+            編集する
+          </button>
+        </div>
+      </header>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 p-6 rounded-xl border border-gray-100">
-              <div>
-                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
-                  連絡先・住所
-                </h3>
-                <p class="text-gray-800">
-                  {p().phone_number || '電話番号未登録'}
-                </p>
-                <p class="text-gray-600 text-sm mt-1">
-                  〒{p().zip_code}
-                  <br />
-                  {p().address}
-                </p>
-              </div>
-            </div>
+      <Show
+        when={!patient.loading}
+        fallback={<p class="text-center py-10 text-gray-500">読み込み中...</p>}
+      >
+        <div class="bg-white shadow rounded-xl border border-gray-200 overflow-hidden">
+          <div class="p-6 border-b border-gray-100 bg-gray-50/50">
+            <h2 class="text-lg font-bold text-gray-900">
+              {patient()?.last_name} {patient()?.first_name}
+              <span class="ml-3 text-sm font-normal text-gray-500">
+                ({patient()?.last_name_kana} {patient()?.first_name_kana})
+              </span>
+            </h2>
+          </div>
 
-            {/* 事故案件一覧セクション */}
-            <section class="space-y-4">
-              <div class="flex justify-between items-center border-b pb-2">
-                <h2 class="text-xl font-bold text-gray-800">事故案件履歴</h2>
-                <A
-                  href={`/patients/${p().id}/accidents/new`}
-                  class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
-                >
-                  ＋ 新規事故案件を登録
-                </A>
-              </div>
-
-              <div class="grid grid-cols-1 gap-4">
-                <For
-                  each={p().accidents}
-                  fallback={
-                    <div class="text-center py-12 bg-white border-2 border-dashed rounded-xl text-gray-400">
-                      登録された事故案件はありません。
-                    </div>
-                  }
-                >
-                  {(accident) => {
-                    // 最新の進捗状況を取得
-                    const latestRecord = accident.treatment_records?.sort(
-                      (a, b) =>
-                        new Date(b.updated_at).getTime() -
-                        new Date(a.getTime).getTime(),
-                    )[0];
-
-                    return (
-                      <A
-                        href={`/accidents/${accident.id}`}
-                        class="block bg-white p-5 rounded-xl border border-gray-200 shadow-sm hover:border-blue-400 transition-all group"
-                      >
-                        <div class="flex justify-between items-start">
-                          <div>
-                            <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">
-                              事故日:{' '}
-                              {formatToJapaneseEra(accident.accident_date)}
-                            </span>
-                            <h4 class="text-lg font-bold text-gray-900 mt-2 group-hover:text-blue-600">
-                              {accident.injury_name || '傷病名未入力'}
-                            </h4>
-                            <p class="text-sm text-gray-500 mt-1">
-                              保険会社: {accident.insurance_company || '不明'}
-                            </p>
-                          </div>
-                          <div class="text-right">
-                            <div class="text-sm font-medium text-gray-900">
-                              状態: {latestRecord?.status || '未着手'}
-                            </div>
-                            <div class="text-xs text-gray-400 mt-1">
-                              最終更新:{' '}
-                              {formatToJapaneseEra(latestRecord?.updated_at)}
-                            </div>
-                          </div>
-                        </div>
-                      </A>
-                    );
-                  }}
-                </For>
-              </div>
+          <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12">
+            <section>
+              <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                性別
+              </label>
+              <p class="mt-1 text-gray-700">
+                {patient()?.gender_type === 'male'
+                  ? '男性'
+                  : patient()?.gender_type === 'female'
+                    ? '女性'
+                    : 'その他'}
+              </p>
             </section>
-          </>
-        )}
+
+            <section>
+              <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                生年月日
+              </label>
+              <p class="mt-1 text-gray-700">{patient()?.birth_date}</p>
+            </section>
+
+            <section>
+              <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                電話番号
+              </label>
+              <p class="mt-1 text-gray-700">
+                {patient()?.phone_number || '未登録'}
+              </p>
+            </section>
+
+            <section>
+              <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                郵便番号
+              </label>
+              <p class="mt-1 text-gray-700">〒{patient()?.zip_code}</p>
+            </section>
+
+            <section class="md:col-span-2">
+              <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                住所
+              </label>
+              <p class="mt-1 text-gray-700">
+                {patient()?.address_1}
+                {patient()?.address_2 && (
+                  <span class="block mt-1">{patient()?.address_2}</span>
+                )}
+              </p>
+            </section>
+          </div>
+        </div>
       </Show>
     </div>
   );
 }
+// 患者の詳細ページコンポーネントをエクスポート
+export default PatientDetailPage;
