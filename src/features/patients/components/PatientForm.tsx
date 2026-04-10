@@ -1,7 +1,7 @@
 // @/features/patients/components/PatientForm.tsx
 import { createForm } from '@tanstack/solid-form';
 import { zodValidator } from '@tanstack/zod-adapter';
-import { type Component, For } from 'solid-js';
+import { type Component, For, Show } from 'solid-js';
 
 import { Button } from '@/components/ui/Button';
 import { EraDatePicker } from '@/components/ui/EraDatePicker';
@@ -12,6 +12,7 @@ import {
   patientSchema,
 } from '@features/patients/schemas/patient';
 
+// 患者情報の入力フォームコンポーネント
 interface PatientFormProps {
   initialData?: Partial<PatientFormValues>;
   onSubmit: (data: PatientFormValues) => Promise<void>;
@@ -19,6 +20,7 @@ interface PatientFormProps {
   isLoading?: boolean;
 }
 
+// 患者情報の入力フォームコンポーネント
 export const PatientForm: Component<PatientFormProps> = (props) => {
   const form = createForm(() => ({
     defaultValues: {
@@ -64,23 +66,39 @@ export const PatientForm: Component<PatientFormProps> = (props) => {
     >
       {/* 氏名エリア */}
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <form.Field name="last_name">
-          {(field) => (
-            <div class="space-y-1">
+        <form.Field
+          name="last_name"
+          validators={{
+            onBlur: patientSchema.shape.last_name,
+          }}
+          children={(field) => (
+            <div>
               <label class="text-sm font-bold text-gray-600">姓</label>
               <input
                 value={field().state.value}
                 onInput={(e) => field().handleChange(e.currentTarget.value)}
                 onBlur={field().handleBlur}
-                class="w-full border border-gray-300 rounded-lg px-3 py-2"
+                class={field().state.meta.errors.length ? 'border-red-500' : ''}
               />
-              <ErrorMessage errors={field().state.meta.errors} />
+              {/* エラーメッセージを表示 */}
+              <Show when={field().state.meta.errors.length > 0}>
+                <em class="text-red-500 text-xs">
+                  <For each={field().state.meta.errors}>
+                    {(err) => (typeof err === 'object' ? err.message : err)}
+                  </For>
+                </em>
+              </Show>
             </div>
           )}
-        </form.Field>
-        <form.Field name="first_name">
-          {(field) => (
-            <div class="space-y-1">
+        />
+
+        <form.Field
+          name="first_name"
+          validators={{
+            onBlur: patientSchema.shape.first_name,
+          }}
+          children={(field) => (
+            <div>
               <label class="text-sm font-bold text-gray-600">名</label>
               <input
                 value={field().state.value}
@@ -89,9 +107,17 @@ export const PatientForm: Component<PatientFormProps> = (props) => {
                 class="w-full border border-gray-300 rounded-lg px-3 py-2"
               />
               <ErrorMessage errors={field().state.meta.errors} />
+              {/* エラーメッセージを表示 */}
+              <Show when={field().state.meta.errors.length > 0}>
+                <em class="text-red-500 text-xs">
+                  <For each={field().state.meta.errors}>
+                    {(err) => (typeof err === 'object' ? err.message : err)}
+                  </For>
+                </em>
+              </Show>
             </div>
           )}
-        </form.Field>
+        />
       </div>
 
       {/* 性別と生年月日 */}
@@ -224,7 +250,12 @@ export const PatientForm: Component<PatientFormProps> = (props) => {
 const ErrorMessage: Component<{ errors: any[] }> = (props) => (
   <div class="min-h-[1.25rem]">
     <For each={props.errors}>
-      {(err) => <p class="text-xs text-red-500 font-medium">{err}</p>}
+      {(err) => (
+        <p class="text-xs text-red-500 font-medium">
+          {/* err がオブジェクトなら message を、文字列ならそのまま表示 */}
+          {typeof err === 'object' ? err.message : err}
+        </p>
+      )}
     </For>
   </div>
 );

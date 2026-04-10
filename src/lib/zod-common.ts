@@ -34,7 +34,31 @@ export const zipCodeSchema = z
       ? `${digits.slice(0, 3)}-${digits.slice(3)}`
       : val;
   })
-  .pipe(z.string().regex(/^\d{3}-\d{4}$/, '7桁の数字で入力してください'));
+  .pipe(
+    z
+      .string()
+      .regex(
+        /^\d{3}-\d{4}$/,
+        '郵便番号を適切な形式で入力してください (例: 123-4567 or 1234567)',
+      ),
+  );
+
+/*export const zipCodeSchema = z
+  .string()
+  .min(1, '郵便番号を入力してください')
+  .transform((val) => {
+    // 全角数字 -> 半角数字
+    const half = jaconv.normalize(val);
+    // 数字以外をすべて削除（ハイフン、長音、スペース等）
+    const digits = half.replace(/\D/g, '');
+    // 7桁なら整形、それ以外は元の値を返して後続のregexでエラーにする
+    return digits.length === 7 
+      ? `${digits.slice(0, 3)}-${digits.slice(3)}` 
+      : val;
+  })
+  .pipe(
+    z.string().regex(/^\d{3}-\d{4}$/, '郵便番号を適切な形式で入力してください (例: 123-4567 or 1234567)')
+  );*/
 
 /** 電話番号のルール */
 export const phoneNumberSchema = z

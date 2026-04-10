@@ -4,7 +4,10 @@ import { type Component, createSignal } from 'solid-js';
 
 import { supabase } from '@/lib/supabase';
 import { PatientForm } from '@features/patients/components/PatientForm';
-import type { PatientFormValues } from '@features/patients/schemas/patient';
+import {
+  type PatientFormValues,
+  patientSchema,
+} from '@features/patients/schemas/patient';
 
 // 患者新規登録ページ
 export const Route = createFileRoute('/patients/new')({
@@ -17,7 +20,11 @@ function PatientNewPage() {
   const [isLoading, setIsLoading] = createSignal(false);
 
   const handleSubmit = async (values: PatientFormValues) => {
+    // バリデーションはPatientForm内で行われるため、ここでは型安全な値が渡される前提
+    const validatedData = patientSchema.parse(values);
+
     setIsLoading(true);
+    // ここでSupabaseにデータを保存する
     try {
       // address_1, address_2 への分割対応版
       const { error } = await supabase
@@ -44,8 +51,18 @@ function PatientNewPage() {
       // 型安全な遷移
       navigate({ to: '/patients' });
     } catch (e: any) {
-      console.error('保存エラー:', e);
-      alert(`登録に失敗しました: ${e.message}`);
+      if (e.name === 'ZodError') {
+        console.error('バリデーションエラー:', e.errors);
+        alert(
+          `入力に誤りがあります: ${e.errors
+            .map((err: any) => err.message)
+            .join(', ')}`,
+        );
+        return;
+      } else {
+        console.error('保存エラー:', e);
+        alert(`登録に失敗しました: ${e.message}`);
+      }
     } finally {
       setIsLoading(false);
     }
