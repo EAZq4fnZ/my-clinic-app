@@ -18,9 +18,10 @@
     /* パス設定（Biome/ESLint/Viteとの連携用） */
     "paths": {
       "@/*": ["./src/*"],
-      "@features/*": ["./src/features/*"],
-      "@ui/*": ["./src/components/ui/*"],
+      "@f/*": ["./src/features/*"],
       "@lib/*": ["./src/lib/*"],
+      "@types/*": ["./src/types/*"],
+      "@ui/*": ["./src/ui/*"],
       "@utils/*": ["./src/utils/*"]
     }
   },

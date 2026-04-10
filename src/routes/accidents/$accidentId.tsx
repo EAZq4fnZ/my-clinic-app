@@ -1,5 +1,5 @@
-import { StatusBadge } from '@/components/ui/StatusBadge';
 import { supabase } from '@/lib/supabase';
+import { StatusBadge } from '@/ui/StatusBadge';
 import { formatToJapaneseEra, getAlertStatus } from '@/utils/dateUtils';
 import { Link, createFileRoute, useParams } from '@tanstack/solid-router';
 import { For, Show, createResource, createSignal } from 'solid-js';

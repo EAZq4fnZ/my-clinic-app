@@ -3,14 +3,14 @@ import { createForm } from '@tanstack/solid-form';
 import { zodValidator } from '@tanstack/zod-adapter';
 import { type Component, For, Show } from 'solid-js';
 
-import { Button } from '@/components/ui/Button';
-import { EraDatePicker } from '@/components/ui/EraDatePicker';
+import { Button } from '@/ui/Button';
+import { EraDatePicker } from '@/ui/EraDatePicker';
 import {
   GENDER_LABELS,
   type PatientFormValues,
   defaultPatientValues,
   patientSchema,
-} from '@features/patients/schemas/patient';
+} from '@f/patients/schemas/patient';
 
 // 患者情報の入力フォームコンポーネント
 interface PatientFormProps {

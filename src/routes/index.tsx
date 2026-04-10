@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/Button';
-import { EraDatePicker } from '@/components/ui/EraDatePicker';
+import { Button } from '@/ui/Button';
+import { EraDatePicker } from '@/ui/EraDatePicker';
 import { patientSchema } from '@features/patients/schemas/patient';
 import { createForm } from '@tanstack/solid-form';
 import { zodValidator } from '@tanstack/zod-adapter';

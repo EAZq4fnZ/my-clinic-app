@@ -1,4 +1,4 @@
-import { Badge } from '@/components/ui/Badge';
+import { Badge } from '@/ui/Badge';
 import { type Component, createMemo } from 'solid-js';
 
 // DB上のステータス型定義

@@ -22,6 +22,7 @@
     "@tanstack/solid-router": "^1.15.0",
     "@tanstack/solid-router-devtools": "^1.166.11",
     "@tanstack/zod-adapter": "^1.166.9",
+    "arktype": "^2.2.0",
     "date-fns": "^4.1.0",
     "jaconv": "^1.1.2",
     "libphonenumber-js": "^1.12.41",

@@ -1,4 +1,4 @@
-import { Badge } from '@/components/ui/Badge';
+import { Badge } from '@/ui/Badge';
 import { getAlertStatus } from '@/utils/dateUtils';
 import { type Component, createMemo } from 'solid-js';
 
