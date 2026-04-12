@@ -1,37 +1,24 @@
 // src/lib/ark.ts
 import { type } from 'arktype';
 
-/**
- * プロジェクト全域で共有する ArkType スキーマ定義
- */
 export const ark = {
-  // 1文字以上の文字列
-  required: type('string>=1'),
+  // 必須：正規化して1文字以上
+  required: type('string.normalize.NFKC').and('string>=1'),
 
-  // カナ正規化 + バリデーション
-  // (NFKCで半角カナ→全角、全角英数→半角を自動処理)
+  // 任意：空文字を許容 (正規化して0文字以上)
+  optional: type("'' | string").pipe((s) =>
+    s === '' ? '' : s.normalize('NFKC'),
+  ),
+
+  // 全角カナ (例: カタカナ、スペース、長音)
   kana: type('string.normalize.NFKC').and('/^[ァ-ヶー・\\s]+$/'),
 
-  // 住所などで使う全角→半角正規化のみの型
-  normalizedString: type('string.normalize.NFKC'),
-
-  // 実在する日付 (YYYY-MM-DD)
-  date: type('string.date'),
-
-  // メールアドレス
-  email: type('string.email'),
-
-  // 郵便番号 (形式チェック)
+  // 郵便番号 (例: 123-4567)
   zip: type('string.normalize.NFKC').and('/^\\d{3}-\\d{4}$/'),
 
-  // 電話番号: 以前は libphonenumber-js を使用していましたが、
-  // まずはシンプルな形式チェックから始め、必要に応じて narrow で拡張します
-  phone: type('string.normalize.NFKC'),
+  // メール：正規化してメールフォーマット
+  email: type('string.normalize.NFKC').and('string.email'),
 
-  // 日付必須: date 型に加えて、空文字を許さないバリデーションを追加
-  dateRequired: type('string > 0')
-    .and('string.normalize.NFKC')
-    .and('/^\\d{4}-\\d{2}-\\d{2}$/'),
-  //  .and((d: string) => d.length > 0 || '日付を入力してください')
-  //  .and((d: string) => /^\d{4}-\d{2}-\d{2}$/.test(d) || '無効な日付形式です'),
+  // 日付：必須
+  date: type('string.date'),
 };
