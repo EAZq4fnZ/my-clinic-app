@@ -1,13 +1,9 @@
+// src/features/patients/schemas/patient.ts
 // 患者情報のスキーマを定義
+import type { Database } from '@/types/database';
+import { type } from 'arktype';
 
-import { z } from 'zod';
-
-import {
-  createKatakanaSchema,
-  dateSchema,
-  phoneNumberSchema,
-  zipCodeSchema,
-} from '@/lib/zod-common';
+import { ark } from '@/lib/ark';
 
 // 性別のラベル管理（JavaのEnum内フィールドのような役割）
 export const GENDER_LABELS = {
@@ -17,62 +13,52 @@ export const GENDER_LABELS = {
   other: 'その他',
 } as const;
 
-/**
- * 患者情報のバリデーション & 変換スキーマ
- */
-//  1. 基本情報（名前、カナ）
-//  2. 生年月日（EraDatePickerから "YYYY-MM-DD" が渡される想定）
-//  3. 電話番号（全角変換 -> 有効性チェック -> ナショナル形式へ整形）
-//  4. 郵便番号（全角変換 -> ハイフン付与 -> 形式チェック）
-//  5. 住所（市区町村、番地）
-//  6. その他のフィールドも必要に応じて追加可能（例：性別、メールアドレスなど）
-export const patientSchema = z.object({
-  // 1. 基本情報（名前、カナ）
-  last_name: z.string().min(1, '姓を入力してください'),
-  first_name: z.string().min(1, '名を入力してください'),
-  last_name_kana: createKatakanaSchema(
-    '【患者登録】姓（カナ）は全角カタカナで入力してください',
+export type GenderType = keyof typeof GENDER_LABELS;
+
+// 1. DBの挿入用型を抽出
+type PatientInsert = Database['public']['Tables']['patients']['Insert'];
+
+// 2. DB定義をベースに ArkType スキーマを作成
+// .and() を使うことで、DBの基本定義に「カナ正規化」などの業務ルールを追加できます
+export const patientSchema = type({
+  // DB定義そのまま（必須項目は required を使って明示）
+  last_name: ark.required,
+  first_name: ark.required,
+
+  // DB定義 + 業務ルール（カナ、日付など）
+  last_name_kana: ark.kana,
+  first_name_kana: ark.kana,
+  gender_type: type.enumerated(
+    ...(Object.keys(GENDER_LABELS) as [GenderType, ...GenderType[]]),
   ),
-  first_name_kana: createKatakanaSchema(
-    '【患者登録】名（カナ）は全角カタカナで入力してください',
-  ),
+  birth_date: ark.date,
+  phone_number: ark.phone,
+  zip_code: ark.zip,
+  address_1: ark.normalizedString,
 
-  // 2. 生年月日 (EraDatePickerから "YYYY-MM-DD" が渡される想定)
-  birth_date: dateSchema,
+  // 任意項目は、DBの型に合わせつつ、空文字も許容する形で定義
+  address_2: ark.normalizedString.or("''"), // 空文字も許容
+  email: ark.email.or("''"), // 空文字も許容
+  occupation: ark.normalizedString.or("''"), // 空文字も許容
+}).as<PatientInsert>(); // 最後にDBの型と一致しているかチェック
 
-  // 3. 電話番号 (全角変換 -> 有効性チェック -> ナショナル形式へ整形)
-  phone_number: phoneNumberSchema,
+export type PatientFormValues = typeof patientSchema extends type<infer U>
+  ? U
+  : never;
 
-  // 4. 郵便番号 (全角変換 -> ハイフン付与 -> 形式チェック)
-  zip_code: zipCodeSchema,
-
-  // 5. 住所
-  address_1: z.string().min(1, '住所（市区町村）を入力してください').optional(),
-  address_2: z.string().min(1, '住所（番地）を入力してください').optional(),
-
-  // 6. その他のフィールドも必要に応じて追加可能
-  gender_type: z
-    .enum(['male', 'female', 'other', 'unknown'])
-    .default('unknown'),
-  email: z.string().email('有効なメールアドレスを入力してください').optional(),
-});
-
-/**
- * TypeScript 型定義
- * z.infer を使うことで、transform 後の型（綺麗なデータ型）が抽出されます
- */
-export type PatientFormValues = z.infer<typeof patientSchema>;
-
-// フォームの初期値（バリデーションエラーを避けるため、必須フィールドは空文字やデフォルト値で初期化）
+// フォームの初期値（DBの型と整合性を保ちつつ、業務ルールに合わせて適切なデフォルト値を設定）
 export const defaultPatientValues: PatientFormValues = {
+  display_id: '',
   last_name: '',
   first_name: '',
   last_name_kana: '',
   first_name_kana: '',
-  gender_type: 'unknown',
-  birth_date: '1980-01-01',
+  gender_type: 'unknown' as GenderType,
+  birth_date: null,
+  phone_number: '',
   zip_code: '',
   address_1: '',
   address_2: '',
-  phone_number: '',
+  email: '',
+  occupation: '',
 };

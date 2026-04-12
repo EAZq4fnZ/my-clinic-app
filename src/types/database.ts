@@ -93,58 +93,58 @@ export type Database = {
       }
       patients: {
         Row: {
-          address_1: string | null
-          address_2: string | null
+          address_1: string
+          address_2: string
           birth_date: string | null
           created_at: string
-          display_id: string | null
-          email: string | null
+          display_id: string
+          email: string
           first_name: string
           first_name_kana: string
           gender_type: Database["public"]["Enums"]["gender_type"]
           id: string
           last_name: string
           last_name_kana: string
-          occupation: string | null
-          phone_number: string | null
+          occupation: string
+          phone_number: string
           updated_at: string
-          zip_code: string | null
+          zip_code: string
         }
         Insert: {
-          address_1?: string | null
-          address_2?: string | null
+          address_1?: string
+          address_2?: string
           birth_date?: string | null
           created_at?: string
-          display_id?: string | null
-          email?: string | null
-          first_name: string
-          first_name_kana: string
-          gender_type?: Database["public"]["Enums"]["gender_type"]
-          id?: string
-          last_name: string
-          last_name_kana: string
-          occupation?: string | null
-          phone_number?: string | null
-          updated_at?: string
-          zip_code?: string | null
-        }
-        Update: {
-          address_1?: string | null
-          address_2?: string | null
-          birth_date?: string | null
-          created_at?: string
-          display_id?: string | null
-          email?: string | null
+          display_id: string
+          email?: string
           first_name?: string
           first_name_kana?: string
           gender_type?: Database["public"]["Enums"]["gender_type"]
           id?: string
           last_name?: string
           last_name_kana?: string
-          occupation?: string | null
-          phone_number?: string | null
+          occupation?: string
+          phone_number?: string
           updated_at?: string
-          zip_code?: string | null
+          zip_code?: string
+        }
+        Update: {
+          address_1?: string
+          address_2?: string
+          birth_date?: string | null
+          created_at?: string
+          display_id?: string
+          email?: string
+          first_name?: string
+          first_name_kana?: string
+          gender_type?: Database["public"]["Enums"]["gender_type"]
+          id?: string
+          last_name?: string
+          last_name_kana?: string
+          occupation?: string
+          phone_number?: string
+          updated_at?: string
+          zip_code?: string
         }
         Relationships: []
       }
