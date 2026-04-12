@@ -1,5 +1,5 @@
-import { supabase } from '@lib/supabase';
 import type { Database } from '@/types/database';
+import { supabase } from '@lib/supabase';
 
 export type PatientInsert = Database['public']['Tables']['patients']['Insert'];
 
@@ -20,7 +20,7 @@ export const fetchPatients = async () => {
     .from('patients')
     .select('*')
     .order('created_at', { ascending: false });
-  
+
   if (error) throw error;
   return data;
 };

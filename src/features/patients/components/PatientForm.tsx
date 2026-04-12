@@ -1,5 +1,5 @@
 // src/features/patients/components/PatientForm.tsx
-import { createForm, formEventClient } from '@tanstack/solid-form';
+import { createForm } from '@tanstack/solid-form';
 import { ArkErrors } from 'arktype';
 import { type Component, For } from 'solid-js';
 
@@ -22,9 +22,13 @@ export interface PatientFormProps {
 export const PatientForm: Component<PatientFormProps> = (props) => {
   const form = createForm(() => ({
     defaultValues: defaultPatientValues,
-    onSubmit: async ({ value }) => {
-      const result = patientSchema(value);
 
+    onSubmit: async ({ value }) => {
+      // 送信前に、必要に応じて値を正規化（例: 郵便番号の形式統一）
+      const normalized = normalizePatientData(value);
+
+      // ArkTypeでバリデーションを実行し、エラーがあればアラート表示して処理を中断
+      const result = patientSchema(normalized);
       if (result instanceof ArkErrors) {
         alert(`入力内容に不備があります:\n${result.summary}`);
         return;
@@ -33,17 +37,6 @@ export const PatientForm: Component<PatientFormProps> = (props) => {
       // 成功時、result は正規化済みのオブジェクト
       const submitData = { ...(result as any) };
 
-      // display_id はサーバー側で自動生成するため、空文字の場合は削除
-      if (!submitData.display_id) {
-        delete submitData.display_id;
-      }
-      // 郵便番号をハイフンありの形式に変換して保存
-      if (submitData.zip_code) {
-        const digits = formatZipCode(submitData.zip_code); // どんな形式でも一旦数字(7桁)にする
-        // 7桁ならハイフンを付ける。そうでなければ（通常ありえないが）数字のみをセット
-        submitData.zip_code =
-          digits.length === 7 ? formatZipCodeWithHyphen(digits) : digits;
-      }
       try {
         // supabase を使って patients テーブルにデータを挿入
         const { data, error: dbError } = await supabase
@@ -279,4 +272,28 @@ export const PatientForm: Component<PatientFormProps> = (props) => {
       </form>
     </div>
   );
+};
+
+/*
+ * 送信前に、必要に応じて値を正規化する関数
+ *  zip_code：郵便番号の形式統一（ハイフンあり or ハイフンなし）
+ *  display_id：新規登録の場合、キー自体を削除、編集の場合前後の空白を削除
+ */
+const normalizePatientData = (value: any) => {
+  const digits: string = formatZipCode(value.zip_code || '');
+  const normalized = {
+    ...value,
+    // 郵便番号を適切な形式に正規化（7桁の数字ならハイフンあり、それ以外は数字のみ）
+    zip_code: digits.length === 7 ? formatZipCodeWithHyphen(digits) : digits,
+
+    // 他のフィールドの微調整が必要になればここに追加
+  };
+
+  if (!normalized.display_id || normalized.display_id.trim() === '') {
+    delete normalized.display_id; // display_id が空文字の場合は undefined にする（サーバー側で自動生成させるため）
+  } else {
+    normalized.display_id = normalized.display_id.trim(); // display_id が存在する場合は前後の空白を削除
+  }
+
+  return normalized;
 };

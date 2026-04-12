@@ -2,8 +2,8 @@
 
 import {
   fetchAddressByZip,
-  formatZipCodeWithHyphen,
   formatZipCode,
+  formatZipCodeWithHyphen,
 } from '@utils/zipCode';
 
 // 郵便番号と住所のフィールドをまとめたコンポーネント
@@ -31,14 +31,14 @@ export const ZipAddressFields = (props: ZipAddressFieldsProps) => {
 
   // フォーカスが外れたときに、ハイフンを含めた形式に変換して保存する
   const handleBlur = (e: any) => {
-    const rawValue = e.currentTarget.value;
-    if (!rawValue) return; // 空文字の場合は何もしない
+    //const rawValue = e.currentTarget.value;
+    //if (!rawValue) return; // 空文字の場合は何もしない
 
-    const digits = formatZipCode(rawValue); // 数字だけを抽出して7桁に整形
-    const r: string =
+    const digits = formatZipCode(e.currentTarget.value); // 数字だけを抽出して7桁に整形
+    const formattedZip: string =
       digits.length === 7 ? formatZipCodeWithHyphen(digits) : digits; // ハイフンを含めた形式に変換
 
-    props.zipField.handleChange(r);
+    props.zipField.handleChange(formattedZip); // ここで 123-4567 に書き換わる
   };
 
   // フォーカスが当たったときは、ハイフンを除いた数字だけの形式に変換して保存する
