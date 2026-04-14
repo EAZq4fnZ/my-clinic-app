@@ -18,6 +18,9 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@f': path.resolve(__dirname, './src/features'),
+      '@px': path.resolve(__dirname, './src/features/px'),
+      '@ax': path.resolve(__dirname, './src/features/ax'),
+      '@tx': path.resolve(__dirname, './src/features/tx'),
       '@lib': path.resolve(__dirname, './src/lib'),
       '@types': path.resolve(__dirname, './src/types'),
       '@ui': path.resolve(__dirname, './src/ui'),
