@@ -19,9 +19,6 @@
     "paths": {
       "@/*": ["./src/*"],
       "@f/*": ["./src/features/*"],
-      "@px/*": ["./src/features/px/*"],
-      "@ax/*": ["./src/features/ax/*"],
-      "@tx/*": ["./src/features/tx/*"],
       "@lib/*": ["./src/lib/*"],
       "@types/*": ["./src/types/*"],
       "@ui/*": ["./src/ui/*"],
