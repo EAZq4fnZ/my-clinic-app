@@ -3,7 +3,6 @@ import { createForm } from '@tanstack/solid-form';
 import { ArkErrors } from 'arktype';
 import { type Component, For } from 'solid-js';
 
-import { formatZipCode, formatZipCodeWithHyphen } from '@/utils/zipCode';
 import {
   GENDER_LABELS,
   type GenderType,
@@ -11,8 +10,9 @@ import {
   patientSchema,
 } from '@f/patients/schemas/patient';
 import { supabase } from '@lib/supabase';
-import { EraDatePicker } from '@ui/EraDatePicker';
+import { FormEraDatePickerField } from '@ui/EraDatePicker';
 import { ZipAddressFields } from '@ui/ZipAddressFields';
+import { formatZipCode, formatZipCodeWithHyphen } from '@utils/zipCode';
 
 export interface PatientFormProps {
   onSuccess: (patient: { id: string }) => void;
@@ -159,7 +159,7 @@ export const PatientForm: Component<PatientFormProps> = (props) => {
               const errorMsg = (f().state.meta.errors as any[])[0]?.toString();
 
               return (
-                <EraDatePicker
+                <FormEraDatePickerField
                   label="生年月日"
                   value={f().state.value as string}
                   // null | undefined が来ても handleChange には文字列を渡す

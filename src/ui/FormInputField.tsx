@@ -1,16 +1,16 @@
 // @ui/FormInputField.tsx
 import { Field } from '@ark-ui/solid';
-import type { FieldApi } from '@tanstack/solid-form';
 import { type ComponentProps, splitProps } from 'solid-js';
 
-// 必要な型引数をコンポーネント全体で受け取る
-interface Props extends ComponentProps<typeof Field.Input> {
-  label: string;
-  field: any;
-  helperText?: string;
-}
+import { FieldLayout, type FieldLayoutProps } from '@ui/shared/FieldLayout';
+
+// FieldLayoutProps と HTML標準の input 属性を統合
+interface Props
+  extends FieldLayoutProps,
+    Omit<ComponentProps<'input'>, 'children'> {}
 
 export const FormInputField = (props: Props) => {
+  // splitProps でレイアウト用と input要素用を分ける
   const [local, inputProps] = splitProps(props, [
     'label',
     'field',
@@ -18,33 +18,19 @@ export const FormInputField = (props: Props) => {
   ]);
 
   return (
-    <Field.Root
-      invalid={!!local.field.state.meta.errors.length}
-      class="flex flex-col gap-1.5"
+    <FieldLayout
+      label={local.label}
+      field={local.field}
+      helperText={local.helperText}
     >
-      <Field.Label class="text-sm font-semibold text-slate-700">
-        {local.label}
-      </Field.Label>
-
       <Field.Input
         {...inputProps}
+        // TanStack Form の状態とイベントを紐付け
         value={local.field.state.value}
         onBlur={local.field.handleBlur}
-        onInput={(e) => local.field.handleChange(e.currentTarget.value as any)}
-        class="border border-slate-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+        onInput={(e) => local.field.handleChange(e.currentTarget.value)}
+        class="border border-slate-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none disabled:bg-slate-50 disabled:text-slate-500"
       />
-
-      {local.field.state.meta.errors.length > 0 ? (
-        <Field.ErrorText class="text-xs text-red-500 font-medium">
-          {local.field.state.meta.errors.join(', ')}
-        </Field.ErrorText>
-      ) : (
-        local.helperText && (
-          <Field.HelperText class="text-xs text-slate-500 font-normal">
-            {local.helperText}
-          </Field.HelperText>
-        )
-      )}
-    </Field.Root>
+    </FieldLayout>
   );
 };
