@@ -6,12 +6,12 @@ import type { Component } from 'solid-js';
 import {
   GENDER_LABELS,
   defaultPatientValues,
-  patientSchema,
-} from '@f/px/schemas/patient'; // パスとファイル名を修正
+  pxSchema,
+} from '@/features/px/schemas/pxSchema';
+//import { formatZipCode } from '@/utils/zipUtils';
 import { FormEraDatePickerField } from '@ui/EraDatePicker';
 import { FormInputField } from '@ui/FormInputField';
 import { ZipCodeSearchField } from '@ui/ZipAddressFields';
-import { formatZipCode } from '@utils/zipCode';
 
 export interface PatientFormProps {
   onSuccess: (patient: { id: string }) => void;
@@ -22,7 +22,7 @@ export const PatientForm: Component<PatientFormProps> = (props) => {
   const form = createForm(() => ({
     defaultValues: defaultPatientValues,
     onSubmit: async ({ value }) => {
-      const result = patientSchema(value);
+      const result = pxSchema(value);
       if (result instanceof ArkErrors) {
         alert(`入力内容に不備があります:\n${result.summary}`);
         return;

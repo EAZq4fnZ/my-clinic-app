@@ -6,14 +6,14 @@ import { type Component, For, Show, createResource } from 'solid-js';
 // 患者一覧ページ
 
 // TanStack Router にこのファイルをルートとして登録します
-export const Route = createFileRoute('/patients/')({
+export const Route = createFileRoute('/px/')({
   component: PatientListPage,
 });
 
 // Supabase から患者データを取得する関数
 const fetchPatients = async () => {
   const { data, error } = await supabase
-    .from('patients')
+    .from('px')
     .select('*')
     .order('last_name_kana', { ascending: true });
 
@@ -36,7 +36,7 @@ function PatientListPage() {
           </p>
         </div>
         <button
-          onClick={() => navigate({ to: '/patients/new' })}
+          onClick={() => navigate({ to: '/px/new' })}
           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
         >
           ＋ 新規登録
@@ -91,23 +91,23 @@ function PatientListPage() {
                       {patient.last_name} {patient.first_name}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {patient.last_name_kana} {patient.first_name_kana}
+                      {patient.last_kana} {patient.first_kana}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {patient.gender_type === 'male'
+                      {patient.gender_code === 'male'
                         ? '男性'
-                        : patient.gender_type === 'female'
+                        : patient.gender_code === 'female'
                           ? '女性'
                           : 'その他'}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {patient.birth_date}
+                      {patient.birthday}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
                         onClick={() =>
                           navigate({
-                            to: '/patients/$patientId',
+                            to: '/px/$patientId',
                             params: { patientId: patient.id },
                           })
                         }

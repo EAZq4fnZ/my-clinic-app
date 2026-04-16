@@ -1,5 +1,6 @@
+// src/features/px/schemas/pxSchema.ts
+
 import { ark } from '@/lib/ark';
-// src/features/patients/schemas/patient.ts
 import { type } from 'arktype';
 
 export const GENDER_LABELS = {
@@ -15,7 +16,7 @@ export type GenderType = keyof typeof GENDER_LABELS;
   患者情報のスキーマ定義
   - ArkType を使用して、各フィールドのバリデーションルールを定義
 */
-export const patientSchema = type({
+export const pxSchema = type({
   last_name: ark.required,
   first_name: ark.required,
   last_name_kana: ark.kana,

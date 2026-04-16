@@ -5,7 +5,7 @@ import { type Component, Show, createResource } from 'solid-js';
 
 // 患者の詳細ページコンポーネント (ルート定義とデータ取得ロジックを含む)
 // ルート定義
-export const Route = createFileRoute('/patients/$patientId')({
+export const Route = createFileRoute('/px/$patientId')({
   component: PatientDetailPage,
 });
 

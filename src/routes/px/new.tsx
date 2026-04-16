@@ -1,9 +1,9 @@
 // src/routes/patients/new.tsx
 import { createFileRoute, useNavigate } from '@tanstack/solid-router';
 
-import { PatientForm } from '@f/patients/components/PatientForm';
+import { PatientForm } from '@f/px/components/PxForm';
 
-export const Route = createFileRoute('/patients/new')({
+export const Route = createFileRoute('/px/new')({
   component: PatientNewPage,
 });
 
@@ -23,15 +23,15 @@ function PatientNewPage() {
         <PatientForm
           onSuccess={(patient: { id: string }) => {
             // 登録成功時、詳細画面へ遷移
-            // ※パス "/patients/$patientId" が routeTree.gen.ts に定義されている必要があります
+            // ※パス "/px/$patientId" が routeTree.gen.ts に定義されている必要があります
             navigate({
-              to: '/patients/$patientId',
+              to: '/px/$patientId',
               params: { patientId: patient.id },
             });
           }}
           onCancel={() => {
             // キャンセル時は一覧に戻る
-            navigate({ to: '/patients' });
+            navigate({ to: '/px' });
           }}
         />
       </div>

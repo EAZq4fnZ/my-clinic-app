@@ -1,7 +1,7 @@
 // src/routes/index.tsx
 import { createFileRoute } from '@tanstack/solid-router';
 
-import { PatientForm } from '@f/px/components/PatientForm';
+import { PatientForm } from '@/features/px/components/PxForm';
 
 // TanStack Router が認識できるよう、必ず "Route" という名前で export します
 export const Route = createFileRoute('/')({
