@@ -6,7 +6,7 @@ import { FieldLayout, type FieldLayoutProps } from '@ui/shared/FieldLayout';
 
 // FieldLayoutProps と HTML標準の input 属性を統合
 interface Props
-  extends FieldLayoutProps,
+  extends Omit<FieldLayoutProps, 'children'>,
     Omit<ComponentProps<'input'>, 'children'> {}
 
 export const FormInputField = (props: Props) => {

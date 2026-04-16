@@ -1,12 +1,14 @@
 // @ui/complex/EraDatePicker.tsx
 import { Combobox, Select, createListCollection } from '@ark-ui/solid';
 import { format, getDaysInMonth, isValid, parseISO } from 'date-fns';
-import { For, createMemo, createSignal, onMount, splitProps } from 'solid-js';
+import { type ComponentProps, For, createMemo, createSignal } from 'solid-js';
 
 import { getJapaneseEraYear } from '@/utils/dateUtils';
 import { FieldLayout, type FieldLayoutProps } from '@ui/shared/FieldLayout';
 
-export const FormEraDatePickerField = (props: FieldLayoutProps) => {
+type FormEraDatePickerFieldProps = Omit<FieldLayoutProps, 'children'>;
+
+export const FormEraDatePickerField = (props: FormEraDatePickerFieldProps) => {
   // 内部状態（YYYY-MM-DDをバラして管理）
   const [year, setYear] = createSignal<string>('');
   const [month, setMonth] = createSignal<string>('');

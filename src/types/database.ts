@@ -14,39 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
-      accidents: {
+      ax: {
         Row: {
-          created_at: string | null
-          display_id: string
-          fault_ratio: string | null
+          ax_meta: Json
+          ax_type_code: Database["public"]["Enums"]["ax_type_code"]
+          created_at: string
+          description: string
+          display_id: string | null
+          fault_ratio: string
           id: string
-          location_address: string | null
-          occurrence_datetime: string
-          occurrence_situation: string | null
-          police_station: string | null
+          incident_at: string
+          place: string
+          sit_code: Database["public"]["Enums"]["sit_code"]
           updated_at: string
+          wth_code: Database["public"]["Enums"]["wth_code"]
         }
         Insert: {
-          created_at?: string | null
-          display_id: string
-          fault_ratio?: string | null
+          ax_meta?: Json
+          ax_type_code?: Database["public"]["Enums"]["ax_type_code"]
+          created_at?: string
+          description?: string
+          display_id?: string | null
+          fault_ratio?: string
           id?: string
-          location_address?: string | null
-          occurrence_datetime: string
-          occurrence_situation?: string | null
-          police_station?: string | null
+          incident_at: string
+          place?: string
+          sit_code?: Database["public"]["Enums"]["sit_code"]
           updated_at?: string
+          wth_code?: Database["public"]["Enums"]["wth_code"]
         }
         Update: {
-          created_at?: string | null
-          display_id?: string
-          fault_ratio?: string | null
+          ax_meta?: Json
+          ax_type_code?: Database["public"]["Enums"]["ax_type_code"]
+          created_at?: string
+          description?: string
+          display_id?: string | null
+          fault_ratio?: string
           id?: string
-          location_address?: string | null
-          occurrence_datetime?: string
-          occurrence_situation?: string | null
-          police_station?: string | null
+          incident_at?: string
+          place?: string
+          sit_code?: Database["public"]["Enums"]["sit_code"]
           updated_at?: string
+          wth_code?: Database["public"]["Enums"]["wth_code"]
         }
         Relationships: []
       }
@@ -81,159 +90,124 @@ export type Database = {
           staff_id?: string | null
           updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "correspondence_logs_record_id_fkey"
-            columns: ["record_id"]
-            isOneToOne: false
-            referencedRelation: "treatment_records"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
-      patients: {
+      px: {
         Row: {
-          address_1: string
-          address_2: string
-          birth_date: string | null
+          addr1: string
+          addr2: string
+          birthday: string | null
           created_at: string
-          display_id: string
+          display_id: string | null
           email: string
+          first_kana: string
           first_name: string
-          first_name_kana: string
-          gender_type: Database["public"]["Enums"]["gender_type"]
+          gender_code: Database["public"]["Enums"]["gender_code"]
           id: string
+          job: string
+          last_kana: string
           last_name: string
-          last_name_kana: string
-          occupation: string
-          phone_number: string
+          tel: string
           updated_at: string
-          zip_code: string
+          zip: string
         }
         Insert: {
-          address_1?: string
-          address_2?: string
-          birth_date?: string | null
+          addr1?: string
+          addr2?: string
+          birthday?: string | null
           created_at?: string
-          display_id: string
+          display_id?: string | null
           email?: string
-          first_name?: string
-          first_name_kana?: string
-          gender_type?: Database["public"]["Enums"]["gender_type"]
+          first_kana: string
+          first_name: string
+          gender_code?: Database["public"]["Enums"]["gender_code"]
           id?: string
-          last_name?: string
-          last_name_kana?: string
-          occupation?: string
-          phone_number?: string
+          job?: string
+          last_kana: string
+          last_name: string
+          tel?: string
           updated_at?: string
-          zip_code?: string
+          zip?: string
         }
         Update: {
-          address_1?: string
-          address_2?: string
-          birth_date?: string | null
+          addr1?: string
+          addr2?: string
+          birthday?: string | null
           created_at?: string
-          display_id?: string
+          display_id?: string | null
           email?: string
+          first_kana?: string
           first_name?: string
-          first_name_kana?: string
-          gender_type?: Database["public"]["Enums"]["gender_type"]
+          gender_code?: Database["public"]["Enums"]["gender_code"]
           id?: string
+          job?: string
+          last_kana?: string
           last_name?: string
-          last_name_kana?: string
-          occupation?: string
-          phone_number?: string
+          tel?: string
           updated_at?: string
-          zip_code?: string
+          zip?: string
         }
         Relationships: []
       }
-      treatment_records: {
+      tx: {
         Row: {
-          accident_cert_applicant: string | null
-          accident_cert_received_date: string | null
-          accident_id: string | null
-          billing_set_applicant: string | null
-          billing_set_received_date: string | null
-          billing_type: string
-          consent_form_received_date: string | null
-          created_at: string | null
+          ax_id: string
+          billing_code: Database["public"]["Enums"]["billing_code"]
+          created_at: string
           display_id: string | null
-          expected_end_date: string | null
-          has_injury_insurance: boolean | null
-          has_lump_sum_payment: boolean | null
           id: string
-          injured_parts: string[] | null
-          insurance_company_contact_date: string | null
-          latest_hospital_visit_date: string | null
-          medical_report_applicant: string | null
-          medical_report_received_date: string | null
-          patient_id: string | null
-          statement_creation_date: string | null
-          treatment_start_date: string | null
+          last_visit_at: string | null
+          memo: string
+          px_id: string
+          status_code: Database["public"]["Enums"]["status_code"]
+          tx_end_at: string | null
+          tx_meta: Json
+          tx_start_at: string
           updated_at: string
         }
         Insert: {
-          accident_cert_applicant?: string | null
-          accident_cert_received_date?: string | null
-          accident_id?: string | null
-          billing_set_applicant?: string | null
-          billing_set_received_date?: string | null
-          billing_type: string
-          consent_form_received_date?: string | null
-          created_at?: string | null
+          ax_id: string
+          billing_code?: Database["public"]["Enums"]["billing_code"]
+          created_at?: string
           display_id?: string | null
-          expected_end_date?: string | null
-          has_injury_insurance?: boolean | null
-          has_lump_sum_payment?: boolean | null
           id?: string
-          injured_parts?: string[] | null
-          insurance_company_contact_date?: string | null
-          latest_hospital_visit_date?: string | null
-          medical_report_applicant?: string | null
-          medical_report_received_date?: string | null
-          patient_id?: string | null
-          statement_creation_date?: string | null
-          treatment_start_date?: string | null
+          last_visit_at?: string | null
+          memo?: string
+          px_id: string
+          status_code?: Database["public"]["Enums"]["status_code"]
+          tx_end_at?: string | null
+          tx_meta?: Json
+          tx_start_at?: string
           updated_at?: string
         }
         Update: {
-          accident_cert_applicant?: string | null
-          accident_cert_received_date?: string | null
-          accident_id?: string | null
-          billing_set_applicant?: string | null
-          billing_set_received_date?: string | null
-          billing_type?: string
-          consent_form_received_date?: string | null
-          created_at?: string | null
+          ax_id?: string
+          billing_code?: Database["public"]["Enums"]["billing_code"]
+          created_at?: string
           display_id?: string | null
-          expected_end_date?: string | null
-          has_injury_insurance?: boolean | null
-          has_lump_sum_payment?: boolean | null
           id?: string
-          injured_parts?: string[] | null
-          insurance_company_contact_date?: string | null
-          latest_hospital_visit_date?: string | null
-          medical_report_applicant?: string | null
-          medical_report_received_date?: string | null
-          patient_id?: string | null
-          statement_creation_date?: string | null
-          treatment_start_date?: string | null
+          last_visit_at?: string | null
+          memo?: string
+          px_id?: string
+          status_code?: Database["public"]["Enums"]["status_code"]
+          tx_end_at?: string | null
+          tx_meta?: Json
+          tx_start_at?: string
           updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "treatment_records_accident_id_fkey"
-            columns: ["accident_id"]
+            foreignKeyName: "tx_ax_id_fkey"
+            columns: ["ax_id"]
             isOneToOne: false
-            referencedRelation: "accidents"
+            referencedRelation: "ax"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "treatment_records_patient_id_fkey"
-            columns: ["patient_id"]
+            foreignKeyName: "tx_px_id_fkey"
+            columns: ["px_id"]
             isOneToOne: false
-            referencedRelation: "patients"
+            referencedRelation: "px"
             referencedColumns: ["id"]
           },
         ]
@@ -246,7 +220,38 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      gender_type: "male" | "female" | "other" | "unknown"
+      ax_type_code: "injury" | "property" | "self" | "other" | "unknown"
+      billing_code: "ins" | "cali" | "pici" | "wcomp" | "reim" | "oth"
+      gender_code: "male" | "female" | "other" | "unknown"
+      sit_code:
+        | "p2v"
+        | "v_head"
+        | "v_side"
+        | "v_cross"
+        | "v_cont"
+        | "v_rear"
+        | "v_oth"
+        | "s_fall"
+        | "s_dev"
+        | "s_col"
+        | "s_oth"
+        | "rail"
+        | "unknown"
+      status_code:
+        | "treating"
+        | "finished"
+        | "fixed"
+        | "stopped"
+        | "settled"
+        | "unknown"
+      wth_code:
+        | "fine"
+        | "cloudy"
+        | "rainy"
+        | "icy"
+        | "foggy"
+        | "other"
+        | "unknown"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -374,7 +379,33 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      gender_type: ["male", "female", "other", "unknown"],
+      ax_type_code: ["injury", "property", "self", "other", "unknown"],
+      billing_code: ["ins", "cali", "pici", "wcomp", "reim", "oth"],
+      gender_code: ["male", "female", "other", "unknown"],
+      sit_code: [
+        "p2v",
+        "v_head",
+        "v_side",
+        "v_cross",
+        "v_cont",
+        "v_rear",
+        "v_oth",
+        "s_fall",
+        "s_dev",
+        "s_col",
+        "s_oth",
+        "rail",
+        "unknown",
+      ],
+      status_code: [
+        "treating",
+        "finished",
+        "fixed",
+        "stopped",
+        "settled",
+        "unknown",
+      ],
+      wth_code: ["fine", "cloudy", "rainy", "icy", "foggy", "other", "unknown"],
     },
   },
 } as const
