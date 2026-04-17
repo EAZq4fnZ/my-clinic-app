@@ -5,7 +5,7 @@ import type { Component } from 'solid-js';
 
 import {
   GENDER_LABELS,
-  defaultPatientValues,
+  defaultPxValues,
   pxSchema,
 } from '@/features/px/schemas/pxSchema';
 //import { formatZipCode } from '@/utils/zipUtils';
@@ -20,7 +20,7 @@ export interface PatientFormProps {
 
 export const PatientForm: Component<PatientFormProps> = (props) => {
   const form = createForm(() => ({
-    defaultValues: defaultPatientValues,
+    defaultValues: defaultPxValues,
     onSubmit: async ({ value }) => {
       const result = pxSchema(value);
       if (result instanceof ArkErrors) {
@@ -59,14 +59,14 @@ export const PatientForm: Component<PatientFormProps> = (props) => {
 
         {/* 郵便番号と住所の連動 */}
         <div class="bg-slate-50 p-4 rounded-xl space-y-4">
-          <form.Field name="zip_code">
+          <form.Field name="zip">
             {(field) => (
               <ZipCodeSearchField
                 field={field()}
                 onAddressFound={(res) => {
                   if (res.status === 200) {
-                    // address_1 に都道府県＋市区町村＋町域をセット
-                    form.setFieldValue('address_1', res.fullAddress);
+                    // addr1 に都道府県＋市区町村＋町域をセット
+                    form.setFieldValue('addr1', res.fullAddress);
                     // 必要に応じて他のフィールドも更新（例：カナなど）
                   }
                 }}
@@ -74,7 +74,7 @@ export const PatientForm: Component<PatientFormProps> = (props) => {
             )}
           </form.Field>
 
-          <form.Field name="address_1">
+          <form.Field name="addr1">
             {(field) => (
               <FormInputField
                 label="住所（自動入力）"
@@ -84,7 +84,7 @@ export const PatientForm: Component<PatientFormProps> = (props) => {
             )}
           </form.Field>
 
-          <form.Field name="address_2">
+          <form.Field name="addr2">
             {(field) => (
               <FormInputField
                 label="建物名・部屋番号"
@@ -95,7 +95,7 @@ export const PatientForm: Component<PatientFormProps> = (props) => {
           </form.Field>
         </div>
 
-        <form.Field name="birth_date">
+        <form.Field name="birthday">
           {(field) => (
             <FormEraDatePickerField label="生年月日" field={field()} />
           )}
