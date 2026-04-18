@@ -1,38 +1,59 @@
-// src/routes/patients/new.tsx
+// src/routes/px/new.tsx
 import { createFileRoute, useNavigate } from '@tanstack/solid-router';
 
-import { PatientForm } from '@f/px/components/PxForm';
+import { PxForm } from '@f/px/components/PxForm';
+import {
+  defaultPxValues,
+  pxInsertSchema,
+  pxInsertValidators,
+} from '@f/px/schemas/pxSchema';
+import { supabase } from '@lib/supabase';
 
 export const Route = createFileRoute('/px/new')({
-  component: PatientNewPage,
+  component: PxCreatePage,
 });
 
-function PatientNewPage() {
+function PxCreatePage() {
   const navigate = useNavigate();
 
-  return (
-    <div class="container mx-auto py-6 max-w-2xl">
-      <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">患者情報の新規登録</h1>
-        <p class="text-sm text-gray-500 mt-1">
-          基本情報を入力して新しい患者レコードを作成します。
-        </p>
-      </div>
+  const handleInsert = async (validatedData: any) => {
+    try {
+      const { error } = await supabase.from('px').insert(validatedData);
 
-      <div class="bg-white shadow-sm border rounded-xl p-6">
-        <PatientForm
-          onSuccess={(patient: { id: string }) => {
-            // 登録成功時、詳細画面へ遷移
-            // ※パス "/px/$patientId" が routeTree.gen.ts に定義されている必要があります
-            navigate({
-              to: '/px/$patientId',
-              params: { patientId: patient.id },
-            });
-          }}
-          onCancel={() => {
-            // キャンセル時は一覧に戻る
-            navigate({ to: '/px' });
-          }}
+      if (error) {
+        throw error;
+      }
+
+      alert('登録が完了しました');
+      // TanStack Router の navigate はオブジェクト形式
+      navigate({ to: '/px' });
+    } catch (error) {
+      console.error('保存エラー:', error);
+      alert('保存に失敗しました。');
+    }
+  };
+
+  const handleCancel = () => {
+    // 一覧へ戻る
+    navigate({ to: '/px' });
+  };
+
+  return (
+    <div class="max-w-2xl mx-auto py-8">
+      <header class="mb-6 px-4">
+        <h1 class="text-2xl font-bold text-gray-800">新規登録</h1>
+        <p class="text-sm text-gray-600">
+          新しい情報を入力して保存してください。
+        </p>
+      </header>
+
+      <div class="bg-white shadow rounded-lg border border-gray-200">
+        <PxForm
+          defaultValues={defaultPxValues}
+          validators={pxInsertValidators}
+          schema={pxInsertSchema}
+          onSubmit={handleInsert}
+          onCancel={handleCancel}
         />
       </div>
     </div>

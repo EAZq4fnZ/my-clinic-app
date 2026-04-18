@@ -1,14 +1,15 @@
+// src/features/px/schemas/pxSchema.ts
+import type { Type } from 'arktype';
 import { type } from 'arktype';
 
-import { ark } from '@/lib/ark';
 import type { Database } from '@/types/database';
+import { ark } from '@lib/ark';
 
-// 1. DBの型を抽出（検索用≒全項目を網羅）
+// 1. DBの型を抽出
 export type PxRow = Database['public']['Tables']['px']['Row'];
 
 /**
- * 2. DBの型 (PxRow['gender_code']) をベースにしたラベル定義
- * Record<型, ラベル> を使うことで、DBのカラム定義に変更があった場合にエラーで検知できます。
+ * 2. 性別定義
  */
 export const GENDER_LABELS: Record<
   Exclude<PxRow['gender_code'], null>,
@@ -20,10 +21,8 @@ export const GENDER_LABELS: Record<
   unknown: '－',
 } as const;
 
-// 2.2 自動的に型を抽出 （例: type GenderCode = 'male' | 'female' | 'other' | 'unknown'）
 export type GenderCode = keyof typeof GENDER_LABELS;
 
-// 2.3UI用オプション配列 （例: セレクトボックスの選択肢など）も自動生成
 export const GENDER_OPTIONS = (Object.keys(GENDER_LABELS) as GenderCode[]).map(
   (key) => ({
     value: key,
@@ -32,8 +31,7 @@ export const GENDER_OPTIONS = (Object.keys(GENDER_LABELS) as GenderCode[]).map(
 );
 
 /**
- * 3. ベースとなる「全項目」バリデーション定義
- * 先頭に _ を付けて「内部用」であることを示し、PxRow と完全に同期させる
+ * 3. ベースとなるバリデーション定義（全項目）
  */
 const _pxBase = type({
   id: 'string',
@@ -42,7 +40,6 @@ const _pxBase = type({
   first_name: ark.required,
   last_kana: ark.kana,
   first_kana: ark.kana,
-  //gender_code: type.enumerated(GENDER_OPTIONS.map((opt) => opt.value)),
   gender_code: type.enumerated(...GENDER_OPTIONS.map((opt) => opt.value)),
   birthday: ark.date,
   tel: ark.required,
@@ -55,14 +52,57 @@ const _pxBase = type({
   updated_at: 'string',
 });
 
-// 3.1 ベースから「全項目必須」の型を生成
+// 基本スキーマと型
 export const pxSchema = _pxBase;
-export type Px = typeof pxSchema.infer;
-// 3.2 登録や更新の際の「初期値」として、id や日付を除いた形で定義
-export const defaultPxValues: Omit<
-  Px,
-  'id' | 'display_id' | 'created_at' | 'updated_at' // これらはDBが自動生成するため、初期値には含めない
-> = {
+//export type Px = typeof pxSchema.infer;
+
+/**
+ * 4. 用途別のスキーマ加工
+ */
+
+// 4.1 登録用 (Insert): DB自動生成項目を除外
+export const pxInsertSchema = _pxBase.omit(
+  'id',
+  'display_id',
+  'created_at',
+  'updated_at',
+);
+export type PxInsert = typeof pxInsertSchema.infer;
+
+// 4.2 更新用 (Update): 登録用をベースに全項目を任意(partial)に
+export const pxUpdateSchema = pxInsertSchema.partial();
+export type PxUpdate = typeof pxUpdateSchema.infer;
+
+// 4.3 検索用 (Search): 全項目を任意に
+export const pxSearchSchema = _pxBase.partial();
+export type PxSearch = typeof pxSearchSchema.infer;
+
+/**
+ * 5. バリデーター生成ヘルパー
+ * 特定の pxSchema ではなく、広義の ArkType (AnyType) を受け入れるように変更します
+ */
+
+const createValidator = (schema: Type) =>
+  ({
+    onChange: ({ value }: { value: any }) => {
+      const out = schema(value);
+      return out instanceof type.errors ? out.summary : undefined;
+    },
+  }) satisfies Record<string, (args: { value: any }) => string | undefined>;
+
+/**
+ * 6. エクスポート用バリデーター
+ * フォームの用途に合わせてこれらを使い分けます
+ */
+export const pxValidators = createValidator(pxSchema); // 全項目用
+export const pxInsertValidators = createValidator(pxInsertSchema); // 登録用
+export const pxUpdateValidators = createValidator(pxUpdateSchema); // 更新用
+export const pxSearchValidators = createValidator(pxSearchSchema); // 検索用
+
+/**
+ * 7. 初期値定義
+ */
+export const defaultPxValues: PxInsert = {
   last_name: '',
   first_name: '',
   last_kana: '',
@@ -76,30 +116,3 @@ export const defaultPxValues: Omit<
   addr2: '',
   job: '',
 };
-
-// 4. ↓ ここからは「加工」だけで各用途の定義を作る
-/**
- * 4.1 検索用 (Search)
- * 全項目を網羅しつつ、未入力(optional)でもOKにする
- */
-export const pxSearchSchema = _pxBase.partial();
-export type PxSearch = typeof pxSearchSchema.infer;
-
-/**
- * 4.2 登録用 (Input/Insert)
- * DBが自動生成する id や日付を除去し、必要な項目だけを抽出
- */
-export const pxInsertSchema = _pxBase.omit(
-  'id',
-  'display_id',
-  'created_at',
-  'updated_at',
-);
-export type PxInsert = typeof pxInsertSchema.infer;
-
-/**
- * 4.3 更新用 (Update)
- * 登録用からさらに「一部の項目だけの送信」を許容する
- */
-export const pxUpdateSchema = pxInsertSchema.partial();
-export type PxUpdate = typeof pxUpdateSchema.infer;

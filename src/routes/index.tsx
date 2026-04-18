@@ -1,23 +1,25 @@
 // src/routes/index.tsx
 import { createFileRoute } from '@tanstack/solid-router';
 
-import { PatientForm } from '@/features/px/components/PxForm';
+import { PxForm } from '@/features/px/components/PxForm';
+import {
+  defaultPxValues,
+  pxInsertSchema,
+  pxInsertValidators,
+} from '@f/px/schemas/pxSchema';
 
-// TanStack Router が認識できるよう、必ず "Route" という名前で export します
 export const Route = createFileRoute('/')({
   component: IndexComponent,
 });
 
 function IndexComponent() {
-  const handleSuccess = (patient: { id: string }) => {
-    console.log('登録成功:', patient);
-    alert('患者情報を登録しました。');
-    // 必要に応じて一覧画面への遷移などをここに記述します
+  const handleSubmit = async (data: any) => {
+    console.log('正規化済みデータ:', data);
+    alert('登録成功');
   };
 
   const handleCancel = () => {
     console.log('キャンセルされました');
-    // 入力内容のリセットや画面遷移などをここに記述します
   };
 
   return (
@@ -27,13 +29,17 @@ function IndexComponent() {
           <h1 class="text-2xl font-extrabold text-gray-900 sm:text-3xl">
             患者情報登録
           </h1>
-          <p class="mt-2 text-sm text-gray-600">
-            新しい患者の基本情報、連絡先、住所を入力してください。
-          </p>
         </header>
 
         <div class="bg-white shadow-sm rounded-2xl overflow-hidden border border-gray-100">
-          <PatientForm onSuccess={handleSuccess} onCancel={handleCancel} />
+          {/* PxForm の Props に合わせて修正 */}
+          <PxForm
+            defaultValues={defaultPxValues}
+            validators={pxInsertValidators}
+            schema={pxInsertSchema}
+            onSubmit={handleSubmit}
+            onCancel={handleCancel}
+          />
         </div>
       </div>
     </main>

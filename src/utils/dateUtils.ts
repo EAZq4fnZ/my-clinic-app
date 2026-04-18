@@ -3,7 +3,7 @@ import { add, isAfter } from 'date-fns';
 /**
  * 西暦を和暦（略称：令和06/01/01形式）に変換する
  */
-export const formatToJapaneseEra = (date: Date | string | null): string => {
+export const formatToJpEra = (date: Date | string | null): string => {
   if (!date) return '-';
   const d = typeof date === 'string' ? new Date(date) : date;
 
@@ -18,7 +18,7 @@ export const formatToJapaneseEra = (date: Date | string | null): string => {
 /**
  * 西暦から和暦の「年」の部分だけを抽出する (例: 2024 -> 令和6)
  */
-export const getJapaneseEraYear = (year: number): string => {
+export const getJpEraYear = (year: number): string => {
   const d = new Date(year, 0, 1);
   return new Intl.DateTimeFormat('ja-JP-u-ca-japanese', {
     era: 'short',

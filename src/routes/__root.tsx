@@ -40,7 +40,7 @@ function RootComponent() {
                 ダッシュボード
               </Link>
               <Link
-                to="/patients"
+                to="/px"
                 activeProps={{ class: 'text-blue-600 font-bold' }}
                 class="text-gray-600 hover:text-blue-500 transition-colors"
               >
