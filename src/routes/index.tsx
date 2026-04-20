@@ -1,4 +1,4 @@
-// src/routes/index.tsx
+// src/routes/index.tsx の修正
 import { createFileRoute } from '@tanstack/solid-router';
 
 import { PxForm } from '@/features/px/components/PxForm';
@@ -6,41 +6,28 @@ import {
   defaultPxValues,
   pxInsertSchema,
   pxInsertValidators,
-} from '@f/px/schemas/pxSchema';
+} from '@/features/px/schemas/pxSchema';
 
 export const Route = createFileRoute('/')({
   component: IndexComponent,
 });
 
 function IndexComponent() {
-  const handleSubmit = async (data: any) => {
-    console.log('正規化済みデータ:', data);
-    alert('登録成功');
-  };
-
-  const handleCancel = () => {
-    console.log('キャンセルされました');
-  };
-
   return (
-    <main class="min-h-screen bg-gray-50 py-8">
-      <div class="max-w-3xl mx-auto px-4">
-        <header class="mb-8 text-center">
-          <h1 class="text-2xl font-extrabold text-gray-900 sm:text-3xl">
-            患者情報登録
-          </h1>
-        </header>
-
-        <div class="bg-white shadow-sm rounded-2xl overflow-hidden border border-gray-100">
-          {/* PxForm の Props に合わせて修正 */}
-          <PxForm
-            defaultValues={defaultPxValues}
-            validators={pxInsertValidators}
-            schema={pxInsertSchema}
-            onSubmit={handleSubmit}
-            onCancel={handleCancel}
-          />
-        </div>
+    <main class="p-8">
+      <h1 class="text-2xl font-bold mb-4">患者情報登録</h1>
+      <div class="bg-white shadow rounded-xl p-4">
+        {/* ★ここを確実に修正！ onCancel や onSubmit を渡す */}
+        <PxForm
+          defaultValues={defaultPxValues}
+          validators={pxInsertValidators}
+          schema={pxInsertSchema}
+          onSubmit={async (data) => {
+            console.log('正規化済みデータ:', data);
+            alert('保存しました');
+          }}
+          onCancel={() => console.log('キャンセルされました')}
+        />
       </div>
     </main>
   );

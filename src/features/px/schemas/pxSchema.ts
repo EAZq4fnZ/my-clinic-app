@@ -2,33 +2,15 @@
 import type { Type } from 'arktype';
 import { type } from 'arktype';
 
+import { GENDER_CODES } from '@/constants/gender';
 import type { Database } from '@/types/database';
 import { ark } from '@lib/ark';
 
 // 1. DBの型を抽出
 export type PxRow = Database['public']['Tables']['px']['Row'];
 
-/**
- * 2. 性別定義
- */
-export const GENDER_LABELS: Record<
-  Exclude<PxRow['gender_code'], null>,
-  string
-> = {
-  male: '男性',
-  female: '女性',
-  other: 'その他',
-  unknown: '－',
-} as const;
-
-export type GenderCode = keyof typeof GENDER_LABELS;
-
-export const GENDER_OPTIONS = (Object.keys(GENDER_LABELS) as GenderCode[]).map(
-  (key) => ({
-    value: key,
-    label: GENDER_LABELS[key],
-  }),
-);
+// 2.性別コードの選択肢を定義
+//ark.enum と GENDER_CODES を組み合わせて、性別コードのバリデーションを行います
 
 /**
  * 3. ベースとなるバリデーション定義（全項目）
@@ -38,13 +20,14 @@ const _pxBase = type({
   display_id: 'string',
   last_name: ark.required,
   first_name: ark.required,
-  last_kana: ark.kana,
-  first_kana: ark.kana,
-  gender_code: type.enumerated(...GENDER_OPTIONS.map((opt) => opt.value)),
+  last_kana: ark.tozenkana.and('string>=1'),
+  first_kana: ark.tozenkana.and('string>=1'),
+  //gender_code: type.enumerated(...GENDER_OPTIONS.map((opt) => opt.value)),
+  gender_code: ark.enum(GENDER_CODES),
   birthday: ark.date,
-  tel: ark.required,
-  email: ark.email.or("''"),
-  zip: ark.zip.or("''"),
+  tel: ark.tel.and('string>=1'), // 必須項目として最低限の長さを要求
+  email: ark.email,
+  zip: ark.zip,
   addr1: ark.required,
   addr2: ark.optional,
   job: ark.optional,

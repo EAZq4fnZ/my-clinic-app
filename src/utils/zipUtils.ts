@@ -82,7 +82,7 @@ export const fetchAddressDetailByZip = async (
       return {
         ...AddressResultDefault, // 空の構造体をコピー
         zipCode: formatZipCodeWithHyphen(cleanZip),
-        status: data.status || 404,
+        status: data.status === 200 && !data.results ? data.status : 404,
         message: data.message || '住所が見つかりませんでした',
       };
     }
