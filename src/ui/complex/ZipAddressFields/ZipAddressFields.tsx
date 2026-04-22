@@ -7,7 +7,7 @@ import {
   formatZipCode,
   formatZipCodeWithHyphen,
 } from '@/utils/zipUtils';
-import { FormInputField } from '@ui/FormInputField';
+import { FormInputField } from '@/ui/form/FormInputField';
 
 interface Props {
   field: any; // TanStack Form field

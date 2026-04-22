@@ -20,10 +20,13 @@ export const formatToJpEra = (date: Date | string | null): string => {
  */
 export const getJpEraYear = (year: number): string => {
   const d = new Date(year, 0, 1);
-  return new Intl.DateTimeFormat('ja-JP-u-ca-japanese', {
+  const eraString = new Intl.DateTimeFormat('ja-JP-u-ca-japanese', {
     era: 'short',
     year: 'numeric',
   }).format(d);
+
+  // 「令和6年」から末尾の「年」を除去して「令和6」にする
+  return eraString.replace(/年$/, '');
 };
 
 /**

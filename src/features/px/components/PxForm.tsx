@@ -3,7 +3,7 @@ import { createForm } from '@tanstack/solid-form';
 import type { Type } from 'arktype';
 import { For } from 'solid-js';
 
-import { GENDER_OPTIONS } from '@f/px/schemas/pxSchema';
+import { GENDER_OPTIONS } from '@/constants/gender';
 
 interface PxFormProps {
   /** 親から渡される初期値（PxInsert型 または PxUpdate型） */

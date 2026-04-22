@@ -1,8 +1,8 @@
-import path from 'node:path';
 // vite.config.ts
+import path from 'node:path';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
-import { defineConfig } from 'vite';
 import solidPlugin from 'vite-plugin-solid';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   plugins: [
@@ -12,9 +12,16 @@ export default defineConfig({
       generatedRouteTree: './src/routeTree.gen.ts',
       target: 'solid',
     }),
-    solidPlugin(),
+    solidPlugin({ hot: false }),
   ],
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    // セットアップファイルのファイル名に注意（ハイフンかドットか）
+    setupFiles: ['./src/vitest.setup.ts'],
+  },
   resolve: {
+    conditions: ['browser', 'development'],
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@f': path.resolve(__dirname, './src/features'),
