@@ -1,3 +1,6 @@
+import '@testing-library/jest-dom'; // 便利なMatcherを使う場合
+import { vi } from 'vitest';
+
 // src/vitest.config.ts
 import path from 'node:path'; // パス操作用
 import solidPlugin from 'vite-plugin-solid';
@@ -23,4 +26,14 @@ export default defineConfig({
       '@utils': path.resolve(__dirname, './src/utils'),
     },
   },
+});
+
+// 全テストで共通のコンポーネントモック
+vi.mock('@ui/shared/FieldLayout', () => ({
+  FieldLayout: (props: any) => <div data-testid="field-layout">{props.children}</div>,
+}));
+
+vi.mock('solid-js/web', async () => {
+  const actual = await vi.importActual('solid-js/web');
+  return { ...actual, Portal: (props: any) => <>{props.children}</> };
 });

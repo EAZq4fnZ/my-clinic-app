@@ -1,13 +1,13 @@
 // @ui/ZipCodeSearchField.tsx
 import { createSignal } from 'solid-js';
 
+import { FormInputField } from '@ui/form/FormInputField';
 import {
   type AddressResult,
   fetchAddressDetailByZip,
   formatZipCode,
   formatZipCodeWithHyphen,
-} from '@/utils/zipUtils';
-import { FormInputField } from '@/ui/form/FormInputField';
+} from '@utils/zipUtils';
 
 interface Props {
   field: any; // TanStack Form field

@@ -4,7 +4,6 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { EraDatePicker } from './EraDatePicker';
 
-// FieldLayout が Ark UI のロジックを呼び出さないようにする
 vi.mock('@ui/shared/FieldLayout', () => ({
   FieldLayout: (props: any) => (
     <div data-testid="mock-field-layout">
@@ -14,83 +13,69 @@ vi.mock('@ui/shared/FieldLayout', () => ({
     </div>
   ),
 }));
-// Portal をただの箱にする
+
 vi.mock('solid-js/web', async () => {
   const actual = await vi.importActual('solid-js/web');
   return {
     ...actual,
-    Portal: (props: any) => <>{props.children}</>, // Portal をただの箱にする
+    Portal: (props: any) => <>{props.children}</>,
   };
 });
 
-// テスト用のモックPropsを作成するヘルパー
 const createMockProps = (initialValue: string) => ({
   label: '生年月日',
   field: {
     state: {
       value: initialValue,
-      meta: { errors: [] }, // errors を必ず空配列で持たせる
+      meta: { errors: [] },
     },
     handleChange: vi.fn(),
     handleBlur: vi.fn(),
     name: 'birthday',
   } as any,
-  helperText: '日付を選択してください',
+  helperText: '和暦で入力してください',
 });
 
 describe('EraDatePicker', () => {
-  it('初期値が正しくパースされ、各フィールドに表示されること', async () => {
-    const props = createMockProps('1985-12-31');
-    render(() => <EraDatePicker {...props} />);
+  it('初期値が正しくパースされ、各フィールドに表示されること', () => {
+    render(() => <EraDatePicker {...createMockProps('2024-05-10')} />);
 
-    // 1. 年 (Select) の検証
-    // getAllByText を使い、最初に見つかった表示用の要素を検証
-    await waitFor(() => {
-      const yearElements = screen.getAllByText(/1985 \(昭和60/);
-      expect(yearElements[0]).toBeInTheDocument();
-    });
-
-    // 2. 月・日 (Combobox Input) の検証
-    const monthInput = screen.getByPlaceholderText('月') as HTMLInputElement;
-    const dayInput = screen.getByPlaceholderText('日') as HTMLInputElement;
-
-    // SignalがDOMに反映されるまで待機
-    await waitFor(() => {
-      expect(monthInput.value).toBe('12月');
-    });
-    await waitFor(() => {
-      expect(dayInput.value).toBe('31日');
-    });
+    // inner-utils.ts のラベル形式に合わせてアサーション
+    expect(screen.getByPlaceholderText('年 (西暦)')).toHaveValue(
+      '2024 (令和6)年',
+    );
+    expect(screen.getByPlaceholderText('月')).toHaveValue('5月');
+    expect(screen.getByPlaceholderText('日')).toHaveValue('10日');
   });
 
-  /*
   it('年を変更した際、親フォームへ正しい形式で通知されること', async () => {
     const props = createMockProps('2024-01-01');
     render(() => <EraDatePicker {...props} />);
 
-    // 年のセレクトを操作（Ark UI の Select 操作をシミュレート）
-    const yearTrigger = screen.getByRole('combobox', { name: /年/i });
-    fireEvent.click(yearTrigger);
+    const yearInput = screen.getByRole('combobox', { name: '年' });
+    fireEvent.focus(yearInput);
+    fireEvent.input(yearInput, { target: { value: '' } });
 
-    const yearOption = screen.getByText('2020 (令和2)');
+    const yearOption = await screen.findByText(/2020/);
     fireEvent.click(yearOption);
 
-    expect(props.field.handleChange).toHaveBeenCalledWith('2020-01-01');
+    await waitFor(() => {
+      expect(props.field.handleChange).toHaveBeenCalledWith('2020-01-01');
+    });
   });
 
   it('月を変更した際、日の選択肢が動的に更新されること（2月のケース）', async () => {
     const props = createMockProps('2024-03-31'); // 2024年は閏年
     render(() => <EraDatePicker {...props} />);
 
-    // 月を 2月に変更
-    const monthInput = screen.getByPlaceholderText('月');
+    const monthInput = screen.getByRole('combobox', { name: '月' });
     fireEvent.focus(monthInput);
-    fireEvent.input(monthInput, { target: { value: '2' } });
+    fireEvent.input(monthInput, { target: { value: '' } });
 
-    const monthOption = screen.getByText('2月');
+    const monthOption = await screen.findByText(/2月/);
     fireEvent.click(monthOption);
 
-    // 2月31日は存在しないため、date-fns の getDaysInMonth により 2024-02-29 に補正されて通知されることを確認
+    // 3月31日 -> 2月29日への補正を検証
     await waitFor(() => {
       expect(props.field.handleChange).toHaveBeenCalledWith('2024-02-29');
     });
@@ -100,25 +85,28 @@ describe('EraDatePicker', () => {
     const props = createMockProps('2023-01-31'); // 2023年は平年
     render(() => <EraDatePicker {...props} />);
 
-    // 月を 2月に変更
-    const monthInput = screen.getByPlaceholderText('月');
-    fireEvent.input(monthInput, { target: { value: '2' } });
-    fireEvent.click(screen.getByText('2月'));
+    const monthInput = screen.getByRole('combobox', { name: '月' });
+    fireEvent.focus(monthInput);
+    fireEvent.input(monthInput, { target: { value: '' } });
 
-    // 2023年2月は28日まで。31日から28日へ補正されるはず
+    const monthOption = await screen.findByText(/2月/);
+    fireEvent.click(monthOption);
+
+    // 平年なので 2月28日
     await waitFor(() => {
       expect(props.field.handleChange).toHaveBeenCalledWith('2023-02-28');
     });
   });
 
-  it('blurイベント時に field.handleBlur が呼ばれること', () => {
+  it('blurイベント時に field.handleBlur が呼ばれること', async () => {
     const props = createMockProps('2024-01-01');
     render(() => <EraDatePicker {...props} />);
 
-    const yearTrigger = screen.getByRole('combobox', { name: /年/i });
-    fireEvent.blur(yearTrigger);
+    const yearInput = screen.getByPlaceholderText('年 (西暦)');
+    fireEvent.blur(yearInput);
 
-    expect(props.field.handleBlur).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(props.field.handleBlur).toHaveBeenCalled();
+    });
   });
-  */
 });

@@ -26,6 +26,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
       '@f': path.resolve(__dirname, './src/features'),
       '@lib': path.resolve(__dirname, './src/lib'),
+      '@testing': path.resolve(__dirname, './src/testing'),
       '@types': path.resolve(__dirname, './src/types'),
       '@ui': path.resolve(__dirname, './src/ui'),
       '@utils': path.resolve(__dirname, './src/utils'),

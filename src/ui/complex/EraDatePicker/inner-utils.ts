@@ -1,5 +1,4 @@
 // src/ui/complex/EraDatePicker/inner-utils.ts
-
 import { format, getDaysInMonth, isValid, parse } from 'date-fns';
 
 import { getJpEraYear } from '@utils/dateUtils';

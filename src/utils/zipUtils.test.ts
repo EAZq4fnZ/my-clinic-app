@@ -1,4 +1,6 @@
+// zipUtils.test.ts
 import { describe, expect, it, vi } from 'vitest';
+
 import { fetchAddressDetailByZip, formatZipCode } from './zipUtils';
 
 describe('zipUtils', () => {

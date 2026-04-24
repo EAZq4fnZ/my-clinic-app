@@ -20,6 +20,7 @@
       "@/*": ["./src/*"],
       "@f/*": ["./src/features/*"],
       "@lib/*": ["./src/lib/*"],
+      "@testing/*": ["./src/testing/*"],
       "@types/*": ["./src/types/*"],
       "@ui/*": ["./src/ui/*"],
       "@utils/*": ["./src/utils/*"]
