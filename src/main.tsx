@@ -2,6 +2,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query';
 import { RouterProvider, createRouter } from '@tanstack/solid-router';
 import { render } from 'solid-js/web';
+import './index.css';
 
 //
 import { routeTree } from './routeTree.gen';

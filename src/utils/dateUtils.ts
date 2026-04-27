@@ -18,9 +18,11 @@ export const formatToJpEra = (date: Date | string | null): string => {
 
 /**
  * 西暦から和暦の「年」の部分だけを抽出する (例: 2024 -> 令和6)
+ * 月、日も引数に取るのは、元号の変わり目（例: 2019-05-01）を正しく処理するため
+ * 月、日を指定しない場合はデフォルトで12月31日とする（年の途中で元号が変わるケースを考慮）
  */
-export const getJpEraYear = (year: number): string => {
-  const d = new Date(year, 0, 1);
+export const getJpEraYear = (year: number, month = 12, day = 31): string => {
+  const d = new Date(year, month - 1, day);
   const eraString = new Intl.DateTimeFormat('ja-JP-u-ca-japanese', {
     era: 'short',
     year: 'numeric',

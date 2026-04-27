@@ -7,15 +7,18 @@ export interface FieldLayoutProps {
   field: any;
   helperText?: string;
   children: JSX.Element;
+  labelClass?: string; // ← 追加
 }
 
 export const FieldLayout = (props: FieldLayoutProps) => {
-  // errors が undefined の場合も考慮して安全に判定
   const hasError = () => (props.field.state.meta.errors?.length ?? 0) > 0;
 
   return (
-    <Field.Root invalid={hasError()} class="flex flex-col gap-1.5 w-full">
-      <Field.Label class="text-sm font-semibold text-slate-700">
+    <Field.Root invalid={hasError()} class="flex flex-col gap-1 w-full">
+      {/* 外部から渡されたスタイルを結合 */}
+      <Field.Label
+        class={`text-sm font-semibold text-slate-700 ${props.labelClass ?? ''}`}
+      >
         {props.label}
       </Field.Label>
 

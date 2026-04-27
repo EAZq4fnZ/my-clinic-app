@@ -26,5 +26,5 @@
       "@utils/*": ["./src/utils/*"]
     }
   },
-  "include": ["src", "eslint.config.js"]
+  "include": ["src", "eslint.config.js", "vitest.setup.ts", "vitest.config.ts"]
 }

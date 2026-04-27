@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TestRouteImport } from './routes/test'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PxIndexRouteImport } from './routes/px/index'
 import { Route as PxNewRouteImport } from './routes/px/new'
 import { Route as PxPatientIdRouteImport } from './routes/px/$patientId'
 
+const TestRoute = TestRouteImport.update({
+  id: '/test',
+  path: '/test',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -37,12 +43,14 @@ const PxPatientIdRoute = PxPatientIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/test': typeof TestRoute
   '/px/$patientId': typeof PxPatientIdRoute
   '/px/new': typeof PxNewRoute
   '/px/': typeof PxIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/test': typeof TestRoute
   '/px/$patientId': typeof PxPatientIdRoute
   '/px/new': typeof PxNewRoute
   '/px': typeof PxIndexRoute
@@ -50,20 +58,22 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/test': typeof TestRoute
   '/px/$patientId': typeof PxPatientIdRoute
   '/px/new': typeof PxNewRoute
   '/px/': typeof PxIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/px/$patientId' | '/px/new' | '/px/'
+  fullPaths: '/' | '/test' | '/px/$patientId' | '/px/new' | '/px/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/px/$patientId' | '/px/new' | '/px'
-  id: '__root__' | '/' | '/px/$patientId' | '/px/new' | '/px/'
+  to: '/' | '/test' | '/px/$patientId' | '/px/new' | '/px'
+  id: '__root__' | '/' | '/test' | '/px/$patientId' | '/px/new' | '/px/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  TestRoute: typeof TestRoute
   PxPatientIdRoute: typeof PxPatientIdRoute
   PxNewRoute: typeof PxNewRoute
   PxIndexRoute: typeof PxIndexRoute
@@ -71,6 +81,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/solid-router' {
   interface FileRoutesByPath {
+    '/test': {
+      id: '/test'
+      path: '/test'
+      fullPath: '/test'
+      preLoaderRoute: typeof TestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -104,6 +121,7 @@ declare module '@tanstack/solid-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  TestRoute: TestRoute,
   PxPatientIdRoute: PxPatientIdRoute,
   PxNewRoute: PxNewRoute,
   PxIndexRoute: PxIndexRoute,
