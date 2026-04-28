@@ -1,6 +1,6 @@
+import { FieldLayout, type FieldLayoutProps } from '@/ui/form/FieldLayout';
 // src/ui/form/FormTextAreaField.tsx
 import { Field } from '@ark-ui/solid';
-import { FieldLayout, type FieldLayoutProps } from '@ui/shared/FieldLayout';
 import { type ComponentProps, splitProps } from 'solid-js';
 
 interface Props

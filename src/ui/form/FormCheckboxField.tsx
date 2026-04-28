@@ -1,6 +1,6 @@
+import { FieldLayout, type FieldLayoutProps } from '@/ui/form/FieldLayout';
 // src/ui/form/FormCheckboxField.tsx
 import { Checkbox } from '@ark-ui/solid';
-import { FieldLayout, type FieldLayoutProps } from '@ui/shared/FieldLayout';
 import { splitProps } from 'solid-js';
 
 export const FormCheckboxField = (

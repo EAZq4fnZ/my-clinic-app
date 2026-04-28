@@ -1,6 +1,6 @@
+import { FieldLayout, type FieldLayoutProps } from '@/ui/form/FieldLayout';
 // src/ui/form/FormSegmentField.tsx
 import { SegmentGroup } from '@ark-ui/solid';
-import { FieldLayout, type FieldLayoutProps } from '@ui/shared/FieldLayout';
 import { For, createMemo, splitProps } from 'solid-js';
 
 interface Option {

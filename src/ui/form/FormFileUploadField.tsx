@@ -1,6 +1,6 @@
+import { FieldLayout, type FieldLayoutProps } from '@/ui/form/FieldLayout';
 // src/ui/form/FormFileUploadField.tsx
 import { FileUpload } from '@ark-ui/solid';
-import { FieldLayout, type FieldLayoutProps } from '@ui/shared/FieldLayout';
 import { For, splitProps } from 'solid-js';
 
 export const FormFileUploadField = (

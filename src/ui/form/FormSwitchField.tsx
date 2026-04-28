@@ -1,6 +1,6 @@
+import { FieldLayout, type FieldLayoutProps } from '@/ui/form/FieldLayout';
 // src/ui/form/FormSwitchField.tsx
 import { Switch } from '@ark-ui/solid';
-import { FieldLayout, type FieldLayoutProps } from '@ui/shared/FieldLayout';
 import { splitProps } from 'solid-js';
 
 export const FormSwitchField = (props: Omit<FieldLayoutProps, 'children'>) => {

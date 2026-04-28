@@ -4,8 +4,10 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "prepare": "panda codegen",
+    "dev": "panda codegen && vite",
+    "build": "panda codegen && vite build",
+    "typecheck": "tsc --noEmit",
     "serve": "vite preview",
     "/* Linter & Formatter 保存時以外の一括チェック用 */": "echo 'Run lint and format'",
     "lint": "biome check . && eslint .",
@@ -34,6 +36,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.7.0",
+    "@pandacss/dev": "^1.10.0",
+    "@park-ui/panda-preset": "^0.43.1",
     "@solidjs/testing-library": "^0.8.10",
     "@tailwindcss/postcss": "^4.2.4",
     "@tanstack/router-plugin": "^1.167.12",

@@ -2,8 +2,8 @@
 import { For, createEffect, createMemo, splitProps } from 'solid-js';
 import { Portal } from 'solid-js/web';
 
+import { FieldLayout, type FieldLayoutProps } from '@/ui/form/FieldLayout';
 import { Combobox, createListCollection } from '@ark-ui/solid';
-import { FieldLayout, type FieldLayoutProps } from '@ui/shared/FieldLayout';
 
 interface Item {
   label: string;

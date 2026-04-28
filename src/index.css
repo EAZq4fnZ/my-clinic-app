@@ -1,5 +1,8 @@
 /* index.css */
-@import "tailwindcss";
+
+/*@import "tailwindcss";*/
+
+@layer reset, base, tokens, recipes, utilities;
 
 /* もしこれまでの @tailwind ... が良ければ、そのまま残しても動くはずですが、
    上記1行に置き換えるのが v4 の標準です */

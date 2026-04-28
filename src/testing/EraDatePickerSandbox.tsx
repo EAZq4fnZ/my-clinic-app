@@ -1,6 +1,7 @@
 // src/testing/EraDatePickerSandbox.tsx
 import { createForm } from '@tanstack/solid-form';
-import { EraDatePicker } from '@ui/complex/EraDatePicker/EraDatePicker';
+
+import { EraDatePicker } from '@/ui/form/EraDatePicker/EraDatePicker';
 
 export function EraDatePickerSandbox() {
   const form = createForm(() => ({

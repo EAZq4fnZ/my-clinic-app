@@ -1,6 +1,6 @@
+import { FieldLayout, type FieldLayoutProps } from '@/ui/form/FieldLayout';
 // src/ui/shared/FormInputField.tsx
 import { Field } from '@ark-ui/solid';
-import { FieldLayout, type FieldLayoutProps } from '@ui/shared/FieldLayout';
 import { type ComponentProps, splitProps } from 'solid-js';
 
 // FieldLayoutProps から children を除いたものと、HTML標準の input 属性を結合

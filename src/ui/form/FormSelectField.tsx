@@ -1,6 +1,6 @@
+import { FieldLayout, type FieldLayoutProps } from '@/ui/form/FieldLayout';
 // src/ui/form/FormSelectField.tsx
 import { Select, createListCollection } from '@ark-ui/solid';
-import { FieldLayout, type FieldLayoutProps } from '@ui/shared/FieldLayout';
 import { For, createMemo, splitProps } from 'solid-js';
 import { Portal } from 'solid-js/web';
 
