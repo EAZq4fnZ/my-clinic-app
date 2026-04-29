@@ -1,4 +1,4 @@
-import { css } from '../../../../styled-system/css';
+import { css } from '@style/css';
 import { createPartsFactory } from '../../shared';
 
 // フォーム全体の共通スタイル
@@ -44,12 +44,20 @@ const comboFactory = createPartsFactory({
   },
 });
 
-export const props = {
-  preset: {
-    eraDate: {
-      year: comboFactory({ root: { placeholder: '年' } }),
-      month: comboFactory({ root: { placeholder: '月' } }),
-      day: comboFactory({ root: { placeholder: '日' } }),
-    },
-  },
+// 各フィールド（年・月・日）ごとのプリセットを定義
+export const eraDate = {
+  year: comboFactory({
+    root: { autoFocus: false, placeholder: '年' },
+  }),
+  month: comboFactory({
+    root: { autoFocus: false, placeholder: '月' },
+  }),
+  day: comboFactory({
+    root: { autoFocus: false, placeholder: '日' },
+  }),
+};
+
+// 最終的なプリセットオブジェクトをエクスポート
+export const preset = {
+  eraDate,
 };

@@ -1,43 +1,54 @@
 // src/ui/shared/FieldLayout.tsx
-import { Field } from '@ark-ui/solid';
-import { type JSX, Show } from 'solid-js';
+import { Fieldset } from '@ark-ui/solid';
+import { css } from '@style/css';
+import { stack } from '@style/patterns';
+import { type ParentProps, Show, splitProps } from 'solid-js';
 
-export interface FieldLayoutProps {
-  label: string;
-  field: any;
+export interface FieldLayoutProps extends ParentProps {
+  label?: string;
   helperText?: string;
-  children: JSX.Element;
-  labelClass?: string; // ← 追加
+  field?: any;
 }
 
 export const FieldLayout = (props: FieldLayoutProps) => {
-  const hasError = () => (props.field.state.meta.errors?.length ?? 0) > 0;
+  const [local] = splitProps(props, [
+    'label',
+    'helperText',
+    'field',
+    'children',
+  ]);
+
+  const f = () =>
+    typeof local.field === 'function' ? local.field() : local.field;
+  const errorMessages = () => f()?.state.meta.errors;
+  const hasError = () => errorMessages()?.length > 0;
 
   return (
-    <Field.Root invalid={hasError()} class="flex flex-col gap-1 w-full">
-      {/* 外部から渡されたスタイルを結合 */}
-      <Field.Label
-        class={`text-sm font-semibold text-slate-700 ${props.labelClass ?? ''}`}
-      >
-        {props.label}
-      </Field.Label>
-
-      {props.children}
-
-      <Show
-        when={hasError()}
-        fallback={
-          <Show when={props.helperText}>
-            <Field.HelperText class="text-xs text-slate-500">
-              {props.helperText}
-            </Field.HelperText>
-          </Show>
-        }
-      >
-        <Field.ErrorText class="text-xs text-red-500 font-medium">
-          {props.field.state.meta.errors.join(', ')}
-        </Field.ErrorText>
+    <Fieldset.Root
+      invalid={hasError()}
+      class={stack({ gap: '1.5', width: 'full' })}
+    >
+      <Show when={local.label}>
+        <Fieldset.Legend
+          class={css({
+            fontWeight: 'semibold',
+            fontSize: 'sm',
+            color: 'fg.default',
+          })}
+        >
+          {local.label}
+        </Fieldset.Legend>
       </Show>
-    </Field.Root>
+
+      {local.children}
+
+      <Fieldset.HelperText class={css({ fontSize: 'xs', color: 'fg.subtle' })}>
+        <Show when={hasError()} fallback={local.helperText}>
+          <span class={css({ color: 'error.default' })}>
+            {errorMessages()?.[0]}
+          </span>
+        </Show>
+      </Fieldset.HelperText>
+    </Fieldset.Root>
   );
 };

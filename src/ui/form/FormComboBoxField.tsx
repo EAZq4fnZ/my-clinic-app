@@ -56,7 +56,6 @@ export const FormComboBoxField = (props: Props) => {
   return (
     <FieldLayout
       label={local.label}
-      labelClass={local.labelClass} // ← FieldLayoutへ渡す
       field={local.field}
       helperText={local.helperText}
     >

@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     /* 基本設定（必須） */
+    "baseUrl": ".",
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "bundler",
@@ -20,11 +21,19 @@
       "@/*": ["./src/*"],
       "@f/*": ["./src/features/*"],
       "@lib/*": ["./src/lib/*"],
+      "@style/*": ["./styled-system/*"],
       "@testing/*": ["./src/testing/*"],
       "@types/*": ["./src/types/*"],
       "@ui/*": ["./src/ui/*"],
       "@utils/*": ["./src/utils/*"]
     }
   },
-  "include": ["src", "eslint.config.js", "vitest.setup.ts", "vitest.config.ts"]
+  "include": [
+    "src",
+    "eslint.config.js",
+    "vitest.setup.ts",
+    "vitest.config.ts",
+    "styled-system/**/*.ts", // styled-system内のすべてのTSファイルを対象にする
+    "styled-system/**/*.mjs" // 生成されるJSファイルも対象に含める
+  ]
 }

@@ -7,6 +7,7 @@ import {
   pxInsertSchema,
   pxInsertValidators,
 } from '@/features/px/schemas/pxSchema';
+import { Button } from '@ui/components/button';
 
 export const Route = createFileRoute('/')({
   component: IndexComponent,
@@ -16,6 +17,9 @@ function IndexComponent() {
   return (
     <main class="p-8">
       <h1 class="text-2xl font-bold mb-4">患者情報登録</h1>
+
+      <Button>Google</Button>
+
       <div class="bg-white shadow rounded-xl p-4">
         {/* ★ここを確実に修正！ onCancel や onSubmit を渡す */}
         <PxForm
